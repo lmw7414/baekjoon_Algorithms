@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-
+//https://freestrokes.tistory.com/88
 public class problem1260 {  // class 명 Main으로 변경할 것
 
     public static void main (String[] args) {
