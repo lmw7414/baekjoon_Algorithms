@@ -6,7 +6,8 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
-
+//미로찾기
+//방문위치 저장은 큐에서 add할 때 해야 중복이 되지 않는다.
 public class problem2178 {
 
     static int N;
