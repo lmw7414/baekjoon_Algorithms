@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
+//연산자 끼워 넣기
+//계산하는 과정 다시한번 생각해볼 것
 public class problem14888 {
     static int N;
     static int exp[];
