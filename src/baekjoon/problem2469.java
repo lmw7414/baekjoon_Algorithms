@@ -3,7 +3,7 @@ package baekjoon;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+//사다리타기
 public class problem2469 {
 
     static int K;  // 사다리 타는 사람의 수; 사다리 개수
