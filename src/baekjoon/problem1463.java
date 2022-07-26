@@ -1,7 +1,8 @@
 package baekjoon;
 
 import java.util.Scanner;
-
+// 1로 만들기
+// 반례 642로 10을 만들어 보자
 public class problem1463 {
 
     static int result = Integer.MAX_VALUE;
