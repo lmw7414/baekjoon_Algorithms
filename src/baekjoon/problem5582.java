@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 //공통부분 문자열
+//Longest Common SubString
 public class problem5582 {
 
     public static void main(String[] args) throws IOException {
