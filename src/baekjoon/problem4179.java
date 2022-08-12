@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 //불!!
+//test data 링크
+//http://acm.student.cs.uwaterloo.ca/~acm00/090613/data/
 public class problem4179 {
 
     static int R;
