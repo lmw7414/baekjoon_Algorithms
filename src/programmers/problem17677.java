@@ -5,7 +5,7 @@ package programmers;
 
 import java.util.*;
 
-public class newsClustering {
+public class problem17677 {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -69,7 +69,6 @@ public class newsClustering {
                 common++;
             }
         }
-
         sum = arrayList1.size() + arrayList2.size();
 
         if(sum == 0)
