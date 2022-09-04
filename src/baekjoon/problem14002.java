@@ -27,8 +27,6 @@ public class problem14002 {
         for(int i = 0; i< N; i++)
             arr[i] = Integer.parseInt(st.nextToken());
 
-
-
         for(int i = 0; i < N; i++) {
             result[i] = 1;
             for(int j = 0; j < i; j++) {
