@@ -3,6 +3,7 @@ package baekjoon;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// 촌수 계산
 public class problem2644 {
 
     static int N;
