@@ -1,4 +1,12 @@
 class Solution {
+    /**
+    * sum이 k 이상이 될때까지 end 이동
+    * 정답이라면 저장
+    * k일 경우 end를 더 움직여 초과할 때까지
+    * start 이동
+    * 정답이 나오면 저장, 그리고 end 이동
+    */
+    
     public int[] solution(int[] sequence, int k) {
         int[] answer = null;
         int start = 0;
