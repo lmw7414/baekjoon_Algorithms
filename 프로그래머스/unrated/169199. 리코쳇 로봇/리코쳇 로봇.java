@@ -1,5 +1,9 @@
 import java.util.*;
-
+/*
+DFS로 접근
+R에서 시작해서 visited에 이동 거리를 저장
+방문하지 않았거나, 방문했는데 최소값으로 해당 위치에 갈 수 있을 경우 visited 값 변경
+*/
 class Solution {
     static int[] dx = {-1, 1, 0, 0}; //상하좌우
     static int[] dy = {0, 0, -1, 1};
