@@ -5,7 +5,7 @@ class Solution {
 
         for(long number : numbers) {
             String pBNum = toPBT(number);
-            int depth = findDepth(pBNum.length()) - 1;
+            int depth = findDepth(pBNum.length());
             boolean result = dfs(pBNum, pBNum.length()/2,  depth);
             answer.add(result ? 1 : 0);
         }
@@ -35,7 +35,7 @@ class Solution {
 
     public static String toPBT(long num) {
         String bNum = Long.toBinaryString(num);
-        int depth = findDepth(bNum.length());
+        int depth = findDepth(bNum.length()) + 1;
         long n = (long)Math.pow(2, depth) - 1;
         String zero = "0".repeat((int)(n - bNum.length()));
         return zero + bNum;
@@ -45,8 +45,8 @@ class Solution {
     public static int findDepth(int length) {
         int i = 1;
         while(true) {
-            if((long)Math.pow(2, i) - 1 >= length)
-                return i;
+            if((long)Math.pow(2, i) > length)
+                return i - 1;
             i += 1;
         }
     }
