@@ -1,24 +1,23 @@
 
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<Integer> list = new LinkedList<>();
+        Queue<Integer> queue = new LinkedList<>();
         int N = sc.nextInt();
 
         for(int i = 1; i<=N; i++) {
-            list.add(i);
+            queue.add(i);
         }
 
-        while(list.size() != 1) {
-            list.remove(0);
-            int num = list.remove(0);
-            list.add(num);
+        while(queue.size() != 1) {
+            queue.poll();
+            queue.add(queue.poll());
         }
-        System.out.println(list.get(0));
+        System.out.println(queue.poll());
     }
 }
