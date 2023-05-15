@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 public class Main {
@@ -8,7 +7,7 @@ public class Main {
         int N = sc.nextInt();
         boolean[] arr = new boolean[N+1];
 
-        for(int i = 2; i <= N; i++) {
+        for(int i = 2; i <= Math.sqrt(N); i++) {
             if(arr[i])
                 continue;
             int mod = i;
