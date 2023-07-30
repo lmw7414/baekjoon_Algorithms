@@ -1,11 +1,9 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-// 이진탐색 풀이[답 참고]
+// 누적 합[답 참고]
 public class Main {
 
     public static void main(String[] args) throws IOException {
@@ -13,38 +11,30 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
         int N = Integer.parseInt(st.nextToken());  // 길이
         int M = Integer.parseInt(st.nextToken());  // 높이
-        int[] down = new int[N / 2];
-        int[] up = new int[N / 2];
-        for (int i = 0; i < N / 2; i++) {
+        int[] down = new int[M + 2];
+        int[] up = new int[M + 2];
+        for (int i = 1; i <= N / 2; i++) {
             int d = Integer.parseInt(br.readLine());
-            int u = Integer.parseInt(br.readLine());
-            down[i] = d;
-            up[i] = u;
+            int u = M - Integer.parseInt(br.readLine()) + 1;
+            down[d]++;
+            up[u]++;
         }
-        Arrays.sort(down);
-        Arrays.sort(up);
+        for (int i = 1; i <= M; i++)
+            down[i] += down[i - 1];
+        for (int i = M; i >= 1; i--)
+            up[i] += up[i + 1];
+
         int min = Integer.MAX_VALUE;
         int cnt = 0;
 
         for (int i = 1; i <= M; i++) {
-            int conflict = binarySearch(0, N / 2, i, down) + binarySearch(0, N / 2, M - i + 1, up);
+            int conflict = (down[M] - down[i - 1]) + (up[1] - up[i + 1]);
             if (min > conflict) {
                 min = conflict;
                 cnt = 1;
             } else if (min == conflict) cnt++;
         }
-        
+
         System.out.println(min + " " + cnt);
     }
-
-    public static int binarySearch(int left, int right, int height, int[] arr) {
-        while (left < right) {
-            int mid = (left + right) / 2;
-            if (arr[mid] >= height)
-                right = mid;
-            else left = mid + 1;
-        }
-        return arr.length - right;
-    }
-    
 }
