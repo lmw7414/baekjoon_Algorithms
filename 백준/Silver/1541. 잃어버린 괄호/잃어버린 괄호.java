@@ -1,22 +1,24 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
+    static int answer = 0;
 
-    public static void main(String[] args) {
-        int answer = 0;
-        Scanner sc = new Scanner(System.in);
-        String str = sc.nextLine();
-
-        String[] first = str.split("-");
-        String[] p = first[0].split("\\+");
-        for(String s : p )
-            answer += Integer.parseInt(s);
-        for(int i = 1; i< first.length; i++) {
-            String[] k = first[i].split("\\+");
-            for(String s : k)
-                answer -= Integer.parseInt(s);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String str = br.readLine();
+        String[] removeMinus = str.split("-");
+        boolean first = true;
+        for (String s : removeMinus) {
+            String[] removePlus = s.split("\\+");
+            for (String t : removePlus) {
+                if (first) {
+                    answer += Integer.parseInt(t);
+                } else answer -= Integer.parseInt(t);
+            }
+            first = false;
         }
-
         System.out.println(answer);
     }
 }
