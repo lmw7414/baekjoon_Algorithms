@@ -8,21 +8,18 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringBuilder sb = new StringBuilder();
 		int N = Integer.parseInt(br.readLine());
 		int[] arr = new int[N + 1];
 		Stack<int[]> stack = new Stack();
 		Stack<int[]> temp = new Stack();
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		for(int i = 0; i < N; i++) {
+		for(int i = 0; i < N; i++)
 			stack.push(new int[] {i + 1, Integer.parseInt(st.nextToken())});
-		}
-
+		
 		while(!stack.isEmpty()) {
-			int cnt = 1;
 			while(!temp.isEmpty() && stack.peek()[1] >= temp.peek()[1]) {
-
 				arr[temp.peek()[0]] = stack.size();
-				cnt++;
 				temp.pop();
 			}
 			if(temp.isEmpty() || stack.peek()[1] < temp.peek()[1]) {
@@ -30,7 +27,8 @@ public class Main {
 			}
 		}
 		for(int i = 1; i < arr.length; i++) {
-			System.out.print(arr[i] + " ");
+			sb.append(arr[i]).append(" ");
 		}
+		System.out.print(sb);
 	}
 }
