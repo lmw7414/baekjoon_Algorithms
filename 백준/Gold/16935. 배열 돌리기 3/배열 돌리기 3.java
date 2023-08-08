@@ -86,19 +86,16 @@ public class Main {
 	}
 	// 왼쪽 90도
 	public static void sol4() {
-		sol3();
-		sol3();
-		sol3();
-//		int[][] temp = new int[M][N];
-//		for(int i = 0; i< N; i++) {
-//			for(int j = 0; j < M; j++) {
-//				temp[i][N - j] = board[i][j];
-//			}
-//		}
-//		int t = N;
-//		N = M;
-//		M = t;
-//		board = temp;
+		int[][] temp = new int[M][N];
+		for(int i = 0; i< N; i++) {
+			for(int j = 0; j < M; j++) {
+				temp[M - j - 1][i] = board[i][j];
+			}
+		}
+		int t = N;
+		N = M;
+		M = t;
+		board = temp;
 	}
 	// 4등분해서 시계방향 이동
 	public static void sol5() {
