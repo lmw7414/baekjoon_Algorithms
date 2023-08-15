@@ -54,8 +54,8 @@ public class Main {
                 int startY = queries[selectedQuery[i]].c - queries[selectedQuery[i]].s; // 가장 왼쪽 위칸 y
                 int endX = queries[selectedQuery[i]].r + queries[selectedQuery[i]].s;   // 가장 오른쪽 아래칸 x
                 int endY = queries[selectedQuery[i]].c + queries[selectedQuery[i]].s;   // 가장 오른쪽 아래칸 y
-                int dep = Math.min(endX - startX, endY - startY) / 2;  // 회전 깊이  depth가 s인가?? 체크해보자
-                rotate(dep, startX - 1, startY - 1, endX - 1, endY - 1);
+                //int dep = Math.min(endX - startX, endY - startY) / 2;  // 회전 깊이  depth가 s인가?? 체크해보자
+                rotate(queries[selectedQuery[i]].s, startX - 1, startY - 1, endX - 1, endY - 1);
             }
             // 다 회전시킨 후 최솟값 찾기
             answer = Math.min(answer, findMin(tempArr));
