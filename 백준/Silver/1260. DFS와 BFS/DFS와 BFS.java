@@ -1,133 +1,80 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+public class Main {
 
+    static int N, M, START;
+    static List<Integer>[] adjList;
+    static StringBuilder sb = new StringBuilder();
 
-public class Main {  // class 명 main으로 변경할 것
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        START = Integer.parseInt(st.nextToken());
 
-    public static void main (String[] args) {
+        adjList = new List[N + 1]; // 노드번호 1번부터 시작
 
-        Scanner scan =new Scanner(System.in);
-        dfsGraph dg;
-        bfsGraph bg;
-        int n;  //정점의 개수
-        int m;  // 간선의 개수
-        int startNum; // 시작점
+        for (int i = 1; i <= N; i++)
+            adjList[i] = new ArrayList<>();
 
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
 
-        n = scan.nextInt();
-        m = scan.nextInt();
-        startNum = scan.nextInt();
-
-        dg = new dfsGraph(n, m);
-        bg = new bfsGraph(n, m);
-
-        dg.initGraph();
-        bg.initGraph();
-
-        for(int i=0; i<m; i++){
-            int v1 = scan.nextInt();
-            int v2 = scan.nextInt();
-            dg.add(v1, v2);
-            bg.add(v1, v2);
+            adjList[s].add(e);
+            adjList[e].add(s);
         }
-        dg.dfs(startNum);
-        System.out.println();
-        bg.bfs(startNum);
+        for(int i = 1; i< adjList.length; i++)
+            Collections.sort(adjList[i]);
 
+        DFS(START);
+        sb.append("\n");
+        BFS(START);
+        System.out.print(sb);
     }
 
-}
+    public static void DFS(int start) {
+        Stack<Integer> stack = new Stack<>();
+        boolean[] visit = new boolean[N + 1];
 
-
-class bfsGraph {
-    private int n;
-    private int m;
-    private int [][]graph;
-    private boolean visitArr[];
-    Queue<Integer> queue = new LinkedList<>();
-
-
-    public bfsGraph (int n, int m) {
-        this.n = n;
-        this.m = m;
-        graph = new int[this.n+1][this.n+1];
-        visitArr = new boolean[this.n+1];
-    }
-
-    public void initGraph() {
-        for (int i=0; i<= n; i++ ) {
-            visitArr[i] = false;
-            for (int j = 0; j <= n; j++)
-                graph[i][j] = 0;
-        }
-    }
-    public void add (int v1, int v2) {
-        //양방향 그래프
-        graph[v1][v2] = 1;
-        graph[v2][v1] = 1;
-    }
-
-    public void bfs(int startNum){
-        queue.add(startNum);
-        //System.out.print(startNum + " ");
-
-        while(!queue.isEmpty()){
-            int i= queue.poll();
-            visitArr[i] = true;
-
-            for(int j = 1; j<= n; j++) {
-                if (graph[i][j] == 1 && visitArr[j] == false) {
-
-                    queue.add(j);
-                    visitArr[j] = true;
-                }
+        stack.push(start);
+        visit[start] = true;
+        sb.append(start).append(" ");
+        while (!stack.isEmpty()) {
+            int cur = stack.peek();
+            boolean flag = false;
+            for(int next : adjList[cur]) {
+                if(visit[next]) continue;
+                visit[next] = true;
+                stack.push(next);
+                sb.append(next).append(" ");
+                flag = true;
+                break;
             }
-            System.out.print(i + " ");
-        }
-
-
-    }
-}
-
-class dfsGraph {
-    private int n;
-    private int m;
-    private int [][]graph;
-    private boolean [] visitArr;
-
-    public dfsGraph (int n, int m) {
-        this.n = n;
-        this.m = m;
-        graph = new int[this.n+1][this.n+1];
-        visitArr = new boolean[this.n+1];
-
-
-    }
-
-    public void initGraph() {
-        for (int i=0; i<= n; i++ ) {
-            visitArr[i] = false;
-            for (int j = 0; j <= n; j++)
-                graph[i][j] = 0;
+            if(!flag) stack.pop();
         }
     }
-    public void add (int v1, int v2) {
-        //양방향 그래프
-        graph[v1][v2] = 1;
-        graph[v2][v1] = 1;
-    }
 
-    public void dfs(int startNum){
+    public static void BFS(int start) {
+        Queue<Integer> queue = new ArrayDeque<>();
+        boolean[] visit = new boolean[N + 1];
+        visit[start] = true;
+        queue.add(start);
 
-        visitArr[startNum] = true;
-        System.out.print(startNum +" ");
-
-        for(int i=1; i<=n; i++) {
-            if(graph[startNum][i] == 1 && visitArr[i] == false )
-                dfs(i);
+        while (!queue.isEmpty()) {
+            int cur = queue.poll();
+            sb.append(cur).append(" ");
+            for(int next : adjList[cur]) {
+                if(visit[next]) continue;
+                visit[next] = true;
+                queue.add(next);
+            }
         }
-        return;
     }
+
 }
