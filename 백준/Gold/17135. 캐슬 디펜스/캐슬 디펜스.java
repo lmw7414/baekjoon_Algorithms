@@ -6,21 +6,19 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- *
  * 배열의 크기는 N * M이고
  * 성의 위치는 N + 1의 위치에 있다.
  * -> 따라서 배열의 크기를((N+1) * M) 크기로 만들자
- *
+ * <p>
  * 궁수는 매턴 사정 거리에 있는 가장 가까운 적을 죽일 수 있다.
  * 궁수의 공격이 끝나면 적은 아래로 한칸 내려온다.
  * 턴은 N으로 볼 수 있고, N의 턴이 모두 끝났을 때 궁수가 최대로 죽일 수 있는 적의 수를 찾아야 한다.
- *
- *  [문제 해결 프로세스]
- *  궁수의 주어진 자리 중 3명으로 만들 수 있는 조합을 구한다.
- *  구하였으면 N의 턴동안 죽일 수 있는 적의 수를 계산한다.
- *  궁수는 사정거리 내의 가장 가까운 적을 죽일 수 있으며, 가장 가까운 적이 2명인 경우 가장 왼쪽 적을 죽인다.
- *  현재 최대값보다 죽인 적의 수가 많다면 값을 바꿔준다.
- *
+ * <p>
+ * [문제 해결 프로세스]
+ * 궁수의 주어진 자리 중 3명으로 만들 수 있는 조합을 구한다.
+ * 구하였으면 N의 턴동안 죽일 수 있는 적의 수를 계산한다.
+ * 궁수는 사정거리 내의 가장 가까운 적을 죽일 수 있으며, 가장 가까운 적이 2명인 경우 가장 왼쪽 적을 죽인다.
+ * 현재 최대값보다 죽인 적의 수가 많다면 값을 바꿔준다.
  */
 
 public class Main {
@@ -30,16 +28,18 @@ public class Main {
     static final int INF = 100_000_0;
     static int answer = 0;  // 현재의 최댓값
     static int[][] game;  // 입력받을 배열
-    static int[][] temp;
+    static int[][] temp;  // 조합이 완료될 때마다 게임 배열을 복사할 배열
     static Point[] archers = new Point[MAX_ARCHER];  // 조합을 저장할 배열
 
     static class Point {
         int x;
         int y;
+
         public Point(int x, int y) {
             this.x = x;
             this.y = y;
         }
+
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -48,6 +48,7 @@ public class Main {
             result = prime * result + y;
             return result;
         }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -77,9 +78,9 @@ public class Main {
         game = new int[N + 1][M];  // 맨 마지막 N행은 성의 위치
 
         // 배열 입력받기
-        for(int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            for(int j = 0; j < M; j++) {
+            for (int j = 0; j < M; j++) {
                 game[i][j] = Integer.parseInt(st.nextToken());
             }
         }
@@ -96,34 +97,34 @@ public class Main {
         // 3. 적 죽이기
         // 4. 턴 N만큼 진행
         // 5. 완료되고 최댓값 계산
-        if(depth == MAX_ARCHER) {
+        if (depth == MAX_ARCHER) {
             copyArr();
             int cnt = 0;
-            for(int turn = 0; turn < N; turn++ ) {
+            for (int turn = 0; turn < N; turn++) {
                 cnt += killEnemy(temp, turn);
                 nextTurn();
             }
             answer = Math.max(answer, cnt);
             return;
         }
-        for(int i = idx; i < M; i++) {
-            if((flag & 1 << i) != 0) continue;
+        for (int i = idx; i < M; i++) {
+            if ((flag & 1 << i) != 0) continue;
             archers[depth] = new Point(N, i);
-            bitMaskingCombination(idx + 1, depth + 1, flag | 1 << i);
+            bitMaskingCombination(i + 1, depth + 1, flag | 1 << i);
         }
 
     }
 
     // 거리 계산 메서드
-    public static int calcDistance(int archerX, int archerY, int enemyX, int enemyY ) {
+    public static int calcDistance(int archerX, int archerY, int enemyX, int enemyY) {
         return Math.abs(archerX - enemyX) + Math.abs(archerY - enemyY);
     }
 
     // 원본 배열 복사 메서드 -- 조합 완성되고 사용
     public static void copyArr() {
         temp = new int[N + 1][M];
-        for(int i = 0; i < N; i++) {
-            for(int j = 0; j < M; j++)
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++)
                 temp[i][j] = game[i][j];
         }
     }
@@ -131,50 +132,48 @@ public class Main {
     // 적이 아래로 내려오는 메서드
     // 적이 궁수에 의해 죽고 난 후 실행
     public static void nextTurn() {
-        // x = 0인 행을 0으로 모두 초기화
-        //Arrays.fill(temp[0], 0);
-        // x = N - 1 인 행을 0으로 모두  초기화
-        //Arrays.fill(temp[N - 1], 0);
-        for(int i = N - 1; i > 0; i--) {
-            temp[i] = temp[i - 1];
+        for (int i = N - 1; i > 0; i--) {
+            temp[i] = temp[i - 1];  //배열의 주소값을 저장
         }
-        temp[0] = new int[M];
+        temp[0] = new int[M];  // 새로 생성해서 저장
     }
+
     // 궁수가 적을 죽이는 메서드
     public static int killEnemy(int[][] fields, int turn) {
-        Set<Point> hs = new HashSet<>();
-        Point[] kill = new Point[MAX_ARCHER];
+        Set<Point> hs = new HashSet<>();  // 궁수에 의해 죽은 적의 위치를 저장, hashSet의 특성으로 같은 위치는 중복 저장이 안됨
+        Point[] kill = new Point[MAX_ARCHER]; // 3명의 궁수가 쏠 적의 자리
         int archerIdx = 0;
-        for(Point archer : archers) {
-            int distance = INF;
-            int preJ = INF;
-            pt : for(int i = N - 1; i >= turn; i-- ) {
+        for (Point archer : archers) {
+            int distance = INF;  // 최대거리로 초기화해놓고 가장 가까운 적이 있을 때 최신화
+            int preJ = INF;      // 가장 왼쪽의 적을 찾기위한 변수
+
+            for (int i = N - 1; i >= turn; i--) {  // 최적화를 위해 turn 까지만 반복되도록 설정(적이 내려온 후의 위쪽은 신경쓰지 않는다.)
                 // 궁수 바로 앞에 적이 있다면 가장 짧은 거리
-                if(fields[i][archer.y] == 1) {
+                if (fields[i][archer.y] == 1) {
                     int cd = calcDistance(archer.x, archer.y, i, archer.y);
-                    if(D < cd) continue;
-                    if(distance > cd) {
+                    if (D < cd) continue;
+                    if (distance > cd) {  // 현재로써 가까운 적의 위치보다 더 가까운 경우
                         distance = cd;
                         preJ = archer.y;
                         kill[archerIdx] = new Point(i, archer.y);
-                    } else if(distance == cd) {
-                        if(preJ > archer.y) {
+                    } else if (distance == cd) {  // 현재로써 최선인 거리와는 같으나
+                        if (preJ > archer.y) {  // 적의 위치가 더 왼쪽인 경우에만 바꿔주기
                             preJ = archer.y;
                             kill[archerIdx] = new Point(i, archer.y);
                         }
                     }
                 }
                 // 궁수 바로 앞에 없고 왼쪽에 위치한 적이 있다면 해당 위치가 가장 짧은 거리
-                for(int j = archer.y - 1; j >= 0; j--) {
-                    if(fields[i][j] == 1) {
+                for (int j = archer.y - 1; j >= 0; j--) {
+                    if (fields[i][j] == 1) {
                         int cd = calcDistance(archer.x, archer.y, i, j);
-                        if(D < cd) continue;
-                        if(distance > cd) {
+                        if (D < cd) continue;
+                        if (distance > cd) {
                             distance = cd;
                             preJ = j;
                             kill[archerIdx] = new Point(i, j);
-                        } else if(distance == cd) {
-                            if(preJ > j) {
+                        } else if (distance == cd) {
+                            if (preJ > j) {
                                 preJ = j;
                                 kill[archerIdx] = new Point(i, j);
                             }
@@ -182,17 +181,16 @@ public class Main {
                     }
                 }
                 // 궁수 왼쪽에도 없고 오른쪽에 있다면 해당 위치가 가장 짧은 거리
-                for(int j = archer.y + 1; j < M; j++) {
-                    if(fields[i][j] == 1) {
+                for (int j = archer.y + 1; j < M; j++) {
+                    if (fields[i][j] == 1) {
                         int cd = calcDistance(archer.x, archer.y, i, j);
-                        if(D < cd) continue;
-
-                        if(distance > cd) {
+                        if (D < cd) continue;
+                        if (distance > cd) {
                             distance = cd;
                             preJ = j;
                             kill[archerIdx] = new Point(i, j);
-                        } else if(distance == cd) {
-                            if(preJ > j) {
+                        } else if (distance == cd) {
+                            if (preJ > j) {
                                 preJ = j;
                                 kill[archerIdx] = new Point(i, j);
                             }
@@ -200,16 +198,14 @@ public class Main {
                     }
                 }
                 // 해당 라인에 아무도 없다면 다음 줄로
-
             }
             archerIdx++;
         }
-        for(int i = 0; i < MAX_ARCHER; i++) {
-            if(kill[i] == null) continue;
+        for (int i = 0; i < MAX_ARCHER; i++) {
+            if (kill[i] == null) continue;
             hs.add(kill[i]);
             fields[kill[i].x][kill[i].y] = 0;
         }
-
         return hs.size();
     }
 
