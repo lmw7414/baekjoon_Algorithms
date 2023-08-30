@@ -1,27 +1,37 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-import java.util.Scanner;
+public class Main {
 
-class Main {
-    static long[][] arr;
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+	static int[][] dp = new int[31][31];
+	static StringBuilder sb = new StringBuilder();
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int T = Integer.parseInt(br.readLine());
+		
+		for(int i = 1; i <= 30; i++) {
+			dp[i][0] = 1;
+			dp[i][i] = 1;
+		}
+		for(int i = 0; i< T; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int r = Integer.parseInt(st.nextToken());
+			int n = Integer.parseInt(st.nextToken());
+			
+			sb.append(coef(n, r) + "\n");
+		}
+		System.out.print(sb);
+		
 
-        int  T = sc.nextInt();
-        arr = new long[31][31];
-        for(int i = 1; i<= 30; i++) {
-            arr[i][0] = 1;
-            arr[i][i] = 1;
-        }
-        for(int i = 0; i< T; i++) {
-            int N = sc.nextInt();
-            int M = sc.nextInt();
-            System.out.println(calc(M, N));
-        }
-    }
-    private static long calc(int M, int N) {
-        if(arr[M][N] == 0)
-            return arr[M][N] = calc(M - 1, N - 1) + calc(M - 1, N);
-        else
-            return arr[M][N];
-    }
+		
+	}
+	
+	public static int coef(int n, int r) {
+		if(dp[n][r] != 0) return dp[n][r];
+		return dp[n][r] = coef(n-1, r-1) + coef(n-1, r);
+	}
+	
+
 }
