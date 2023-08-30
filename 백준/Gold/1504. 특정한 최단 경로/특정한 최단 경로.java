@@ -1,112 +1,116 @@
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
-import java.io.*;
 
+/**
+ * [문제설명]
+ * 특정한 최단 거리 구하기
+ * 임의의 주어진 두 정점은 반드시 통과해야한다.
+ * - case1 : 1 -> A -> B -> N
+ * - case2 : 1 -> B -> A -> N
+ * 1부터 특정 정점을 거친 후 N까지 가는 길이 없을 경우 -1
+ * <p>
+ * [문제 해결 프로세스]
+ * 1번 부터 특정 정점까지 가야하는 최단 경로를 계산해야 한다. -> 다익스트라
+ * 다익스트라는 하나의 정점으로 부터 모든 정점까지의 최단 거리를 알 수 있다.
+ * 두가지 경우의 수를 고려해야함. 위의 case 2개
+ * 1. 1 부터 A까지 최단 거리 계산
+ * 2. A 부터 B까지 최단 거리 계산
+ * 3. B 부터 N까지 최단 거리 계산
+ * 4. 위에서 1 부터 특정 정점을 거쳐 N까지 가는 최단 거리를 변수에 저장해 놓는다.
+ * <p>
+ * 5. 1 부터 B까지 최단 거리 계산
+ * 6. B 부터 A까지 최단 거리 계산
+ * 7. A 부터 N까지 최단 거리 계산
+ * 8. 위에서 1 부터 특정 정점을 거쳐 N까지 가는 최단 거리를 변수에 저장해 놓는다.
+ * <p>
+ * [다시 정리]
+ * 1. 1번에서 갈 수 있는 모든 정점의 최단거리 구하기
+ * 2. A에서 갈 수 있는 모든 정점의 최단 거리 구하기
+ * 3. B에서 갈 수 있는 모든 정점의 최단 거리 구하기
+ * -> 총 다익스트라 메서드를 3번 호출해야함
+ */
 public class Main {
-
+    static int N, E;
+    static List<Edge>[] adjList;
     static final int INF = Integer.MAX_VALUE;
-    static int N;
-    static int E;
-    static int V1;
-    static int V2;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws NumberFormatException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        HashMap<Integer, List<Line>> map = new HashMap<>();
+
         N = Integer.parseInt(st.nextToken());
         E = Integer.parseInt(st.nextToken());
+        adjList = new List[N + 1];
+        for (int i = 1; i <= N; i++) {
+            adjList[i] = new ArrayList<>();
+        }
 
         for (int i = 0; i < E; i++) {
-            int v1, v2, weight;
             st = new StringTokenizer(br.readLine());
-
-            v1 = Integer.parseInt(st.nextToken());
-            v2 = Integer.parseInt(st.nextToken());
-            weight = Integer.parseInt(st.nextToken());
-
-            if (!map.containsKey(v1)) {
-                map.put(v1, new ArrayList());
-                map.get(v1).add(new Line(v1, v2, weight));
-            } else {
-                map.get(v1).add(new Line(v1, v2, weight));
-            }
-
-            if (!map.containsKey(v2)) {
-                map.put(v2, new ArrayList());
-                map.get(v2).add(new Line(v2, v1, weight));
-            } else {
-                map.get(v2).add(new Line(v2, v1, weight));
-            }
-
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            adjList[s].add(new Edge(s, e, w));
+            adjList[e].add(new Edge(e, s, w));
         }
-
         st = new StringTokenizer(br.readLine());
+        int A = Integer.parseInt(st.nextToken());  // 특정 정점1
+        int B = Integer.parseInt(st.nextToken());  // 특정 정점2
 
-        V1 = Integer.parseInt(st.nextToken());
-        V2 = Integer.parseInt(st.nextToken());
 
-        int[] f = new int[N + 1];
-        int[] s = new int[N + 1];
-        int[] t = new int[N + 1];
+        // 1. 1번에서 갈 수 있는 모든 정점의 최단거리 구하기
+        int[] first = dijkstra(1);
+        // 2. A에서 갈 수 있는 모든 정점의 최단 거리 구하기
+        int[] second = dijkstra(A);
+        // 3. B에서 갈 수 있는 모든 정점의 최단 거리 구하기
+        int[] third = dijkstra(B);
 
-        Arrays.fill(f, INF);
-        Arrays.fill(s, INF);
-        Arrays.fill(t, INF);
-        dijkstra(map, f, 1);
-        dijkstra(map, s, V1);
-        dijkstra(map, t, V2);
+        int case1 = 0;
+        int case2 = 0;
+        // 1 -> A -> B -> N
+        if (first[A] == INF || second[B] == INF || third[N] == INF) case1 = INF;
+        else case1 = first[A] + second[B] + third[N];
+        // 1 -> B -> A -> N
+        if (first[B] == INF || second[A] == INF || third[N] == INF) case2 = INF;
+        else case2 = first[B] + third[A] + second[N];
 
-        int c1;
-        int c2;
-
-        if (f[V1] == INF || s[V2] == INF || t[N] == INF) {
-            c1 = INF;
-        } else {
-            c1 = f[V1] + s[V2] + t[N];
-        }
-        if (f[V2] == INF || t[V1] == INF || s[N] == INF) {
-            c2 = INF;
-        } else {
-            c2 = f[V2] + t[V1] + s[N];
-        }
-
-        if (c1 == INF && c2 == INF)
-            System.out.println(-1);
-        else
-            System.out.println(Math.min(c1, c2));
+        if (case1 == INF && case2 == INF) System.out.println(-1);
+        else System.out.println(Math.min(case1, case2));
     }
 
+    public static int[] dijkstra(int start) {
+        PriorityQueue<Edge> pq = new PriorityQueue<>((a1, b1) -> a1.w - b1.w);
+        int[] distances = new int[N + 1];
+        Arrays.fill(distances, INF);
 
-    public static void dijkstra(HashMap<Integer, List<Line>> map, int answer[], int start) {
-        PriorityQueue<Line> pq = new PriorityQueue<>((a1, a2) -> a1.weight - a2.weight);
-        answer[start] = 0;
-
-        pq.add(new Line(start, start, 0));
+        distances[start] = 0;
+        pq.add(new Edge(start, start, 0));
 
         while (!pq.isEmpty()) {
-            Line current = pq.poll();
-            if(!map.containsKey(current.v2))
-                break;
-            for (Line v : map.get(current.v2)) {
-                if (answer[v.v2] > answer[v.v1] + v.weight) {
-                    answer[v.v2] = answer[v.v1] + v.weight;
-                    pq.add(v);
+            Edge cur = pq.poll();
+            for (Edge edge : adjList[cur.e]) {
+                if (distances[edge.e] > distances[edge.s] + edge.w) {
+                    distances[edge.e] = distances[edge.s] + edge.w;
+                    pq.add(edge);
                 }
             }
         }
+
+
+        return distances;
     }
 
-    static class Line {
-        int v1;
-        int v2;
-        int weight;
+    static class Edge {
+        int s;
+        int e;
+        int w;
 
-        Line(int v1, int v2, int weight) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.weight = weight;
+        public Edge(int s, int e, int w) {
+            this.s = s;
+            this.e = e;
+            this.w = w;
         }
     }
-
 }
