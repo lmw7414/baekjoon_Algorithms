@@ -40,90 +40,54 @@ import java.util.StringTokenizer;
  *  - 양이 있을 경우 -> 부모마을로 보내기
  * 5. 1번 마을에 도달했으면 answer 증가
  * 6. 최종 1번 마을의 양의 수 출력
+ * -> 메모리 : 77460kb, 시간 : 1380ms
  *
  * [다시 생각해보기]
- *
+ * 1. 굳이 Village 클래스가 필요할까?
+ * 2. 양은 양수로, 늑대는 음수로 표현
+ * 3. 인접리스트로 접근하기
  */
 
 public class Main {
 
     static int N;
-    static Village[] villages;
-    static boolean[] visit;
+    static List<Integer>[] adjList;
+    static long[] animals;
     public static void main(String[] args) throws NumberFormatException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine()); // 마을의 수
 
-        villages = new Village[N + 1];
+        // 변수 초기화
+        adjList = new List[N + 1];
+        animals = new long[N + 1];
         for(int i = 1; i<= N; i++) {
-            villages[i] = new Village();
+            adjList[i] = new ArrayList<>();
         }
-        villages[1].setVillage(1, 'S', 1, 0, 0);
-        visit = new boolean[N + 1];
 
         for(int i = 2; i <= N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            char T = st.nextToken().charAt(0);
-            long A = Long.parseLong(st.nextToken());
-            int parent = Integer.parseInt(st.nextToken());
-
-            if(T == 'S') villages[i].setVillage(i, T, parent, A, 0);  // 양
-            else villages[i].setVillage(i, T, parent, 0, A);  // 늑대
-            villages[parent].child.add(i);
+            char T = st.nextToken().charAt(0);              // S:양 or W:늑대
+            long A = Long.parseLong(st.nextToken());        //동물의 수
+            int parent = Integer.parseInt(st.nextToken());  //부모 노드
+            adjList[parent].add(i);
+            if(T == 'S') animals[i] = A;  // 양
+            else animals[i] = -A;  // 늑대
         }
-        DFS(1);
-        System.out.println(villages[1].sheep / 2);
+        DFS(1, 1);
+        System.out.println(animals[1]);
 
     }
 
-    public static void DFS(int root) {
-        Village vil = villages[root];
-        for(int child : vil.child) {
-            DFS(child);
+    public static void DFS(int self, int parent) {
+        for(int child : adjList[self]) {
+            DFS(child, self);
         }
-        moveSheep(vil.idx);
-
-    }
-
-    public static void moveSheep(int self) {
-        Village vil = villages[self];
-        // 현재 섬이 양이 있는 섬인 경우 부모 섬으로 양을 보낸다.
-        if(vil.t == 'S') {
-            Village parentVil = villages[vil.parent];
-            if(parentVil.t == 'S') {
-                parentVil.sheep += vil.sheep;
-            } else {
-                // 부모섬에 늑대의 수가 더 많을 경우
-                if (parentVil.wolf > vil.sheep)
-                    parentVil.wolf -= vil.sheep;
-                    // 부모 섬에 늑대의 수가 더 적을 경우
-                else if (parentVil.wolf < vil.sheep) {
-                    parentVil.t = 'S';
-                    parentVil.sheep = vil.sheep - parentVil.wolf;
-                } else {
-                    parentVil.t = 'S';
-                    parentVil.wolf = 0;
-                }
+        if(self != parent) { //self와 parent가 같다면 해당 노드는 루트 노드
+            // animals[self]가 음수일 경우 이동 안함
+            // animals[self]가 양수일 경우 위로 이동
+            if(animals[self] > 0) {
+                animals[parent] += animals[self];
             }
         }
-        // 현재 섬이 늑대 섬인 경우는 고려할 필요 없음
     }
-
-    static class Village {
-        int idx;     // 자신 idx
-        char t;      // 타입
-        int parent;  // 부모 섬
-        long sheep;   // 양의 수
-        long wolf;    // 늑대 수
-        List<Integer> child = new ArrayList<>();
-
-        public void setVillage(int idx, char t, int parent, long sheep, long wolf) {
-            this.idx = idx;
-            this.t = t;
-            this.parent = parent;
-            this.sheep = sheep;
-            this.wolf = wolf;
-        }
-    }
-
 }
