@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
  */
 
 public class Main {
-    static int D, N, idx;
+    static int D, N;
     static int[] arr;
 
     public static void main(String[] args) throws IOException {
@@ -39,28 +39,18 @@ public class Main {
         }
 
         st = new StringTokenizer(br.readLine());
-        idx = D;
+        int idx = D;
         for (int i = 0; i < N; i++) {
             int input = Integer.parseInt(st.nextToken());
-            calc(input);
+            for (; idx > 0; idx--) {
+                if (arr[idx] >= input) {
+                    arr[idx] = 0;
+                    break;
+                }
+            }
         }
 
         System.out.println(idx);
-    }
-    
-    public static void calc(int pizza) {
-        boolean flag = false;
-        for(int i = idx; i > 0; i--) {
-            if(pizza <= arr[i]) {
-                idx = i;
-                arr[i] = 0;
-                flag = true;
-                break;
-            }
-        }
-        if(!flag) {
-            idx = 0;
-        }
     }
 
 }
