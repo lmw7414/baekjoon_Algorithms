@@ -37,47 +37,47 @@ public class Main {
 
     // 특정 방향으로 밀치기
     public static int[][] pushInDirection(int[][] copy, int dir) {
-        int[][] copy2 = moveInDirection(copy, dir); // 밀쳐서 정렬
+        copy = moveInDirection(copy, dir); // 밀쳐서 정렬
         if (dir == 0) {  // 위로 밀치기
             for (int i = 0; i < N - 1; i++) {
                 for (int j = 0; j < N; j++) {
 
                     // 0이면 계산 할 필요 없음
-                    if (copy2[i][j] == copy2[i + 1][j]) {
-                        copy2[i][j] *= 2;
-                        copy2[i + 1][j] = 0;
+                    if (copy[i][j] == copy[i + 1][j]) {
+                        copy[i][j] *= 2;
+                        copy[i + 1][j] = 0;
                     }
                 }
             }
         } else if (dir == 1) {  // 아래로 밀치기
             for (int i = N - 1; i > 0; i--) {
                 for (int j = 0; j < N; j++) {
-                    if (copy2[i][j] == copy2[i - 1][j]) {
-                        copy2[i][j] *= 2;
-                        copy2[i - 1][j] = 0;
+                    if (copy[i][j] == copy[i - 1][j]) {
+                        copy[i][j] *= 2;
+                        copy[i - 1][j] = 0;
                     }
                 }
             }
         } else if (dir == 2) {  // 좌로 밀치기
             for (int i = 0; i < N - 1; i++) {
                 for (int j = 0; j < N; j++) {
-                    if (copy2[j][i] == copy2[j][i + 1]) {
-                        copy2[j][i] *= 2;
-                        copy2[j][i + 1] = 0;
+                    if (copy[j][i] == copy[j][i + 1]) {
+                        copy[j][i] *= 2;
+                        copy[j][i + 1] = 0;
                     }
                 }
             }
         } else {  // 우로 밀치기
             for (int i = N - 1; i > 0; i--) {
                 for (int j = 0; j < N; j++) {
-                    if (copy2[j][i] == copy2[j][i - 1]) {
-                        copy2[j][i] *= 2;
-                        copy2[j][i - 1] = 0;
+                    if (copy[j][i] == copy[j][i - 1]) {
+                        copy[j][i] *= 2;
+                        copy[j][i - 1] = 0;
                     }
                 }
             }
         }
-        return moveInDirection(copy2, dir); // 정리되었으니 다시 정렬
+        return moveInDirection(copy, dir); // 정리되었으니 다시 정렬
     }
 
     static int[][] moveInDirection(int[][] copy, int dir) {
@@ -156,8 +156,6 @@ public class Main {
 
     static void setPermutation(int depth) {
         if (depth == 5) {
-            // 초반 밀착 필요 4 0 4 0 인 경우 -> 4 4 0 0이 되게끔
-            //int[][] copy = moveInDirection(copyArr(), permutation[0]);
             int[][] copy = copyArr();
             for (int i = 0; i < permutation.length; i++) {
                 copy = pushInDirection(copy, permutation[i]);
