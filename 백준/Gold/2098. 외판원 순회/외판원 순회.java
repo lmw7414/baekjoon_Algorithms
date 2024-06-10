@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
  */
 public class Main {
     static int N;
-    static int INF = 987654321;
+    static int INF = 987654322;
     static int[][] arr;
     static int[][] dp;
 
