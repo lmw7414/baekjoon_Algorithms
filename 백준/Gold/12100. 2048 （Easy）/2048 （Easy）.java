@@ -1,55 +1,118 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
- * [조건]
- * 1. 시간제한 1초
- * 2. 메모리 제한 512MB
- * 3. 1 <= N <= 20
- * <p>
+ * 최대 5번 움직여서 만들 수 있는 가장 큰 블록의 값 구하기
+ * [입력]
+ * N (1 ≤ N ≤ 20)
+ * 들어올 수 있는 최대 값 2 ~ 1024로 2의 제곱근 형태
  * [문제 해결 프로세스]
- * 1. 상하좌우로 이동했을 때 모양 만들기
- * 2. 순열로 5단계에 대한 모든 방향 계산하기
+ * 1. 5번을 움직여 최대 값을 찾기 위해서는 순열이 필요함 (상하좌우)
+ * 2. 순열이 만들어졌을 때 해당 방향으로 게임 시작
+ * 3. 원본배열 남기고 복사배열 사용
+ * 4. 벽으로 밀기, 합치기 2개 메서드 필요
  */
 
 public class Main {
-    static int[][] arr;
-    static int[] permutation = new int[5];
-    static int N;
-    static int answer = Integer.MIN_VALUE;
+    static int N, answer;
+    static int[][] original;
+    static int[] permutation;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        arr = new int[N][N];
+        original = new int[N][N];
+        permutation = new int[5];
+
+        StringTokenizer st = null;
         for (int i = 0; i < N; i++) {
-            String[] line = br.readLine().split(" ");
+            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
-                arr[i][j] = Integer.parseInt(line[j]);
+                original[i][j] = Integer.parseInt(st.nextToken());
             }
         }
         setPermutation(0);
         System.out.println(answer);
     }
 
-    // 특정 방향으로 밀치기
-    public static int[][] pushInDirection(int[][] copy, int dir) {
-        copy = moveInDirection(copy, dir); // 밀쳐서 정렬
-        if (dir == 0) {  // 위로 밀치기
+    public static int game(int[][] copy) {
+        for (int dir : permutation) {
+            push(copy, dir);
+            addUp(copy, dir);
+            push(copy, dir);
+        }
+        return findMax(copy);
+    }
+
+    // 벽으로 밀치기
+    public static int[][] push(int[][] copy, int dir) {
+        List<Integer> temp = null;
+        if (dir == 0) {  // 상
+            for (int i = 0; i < N; i++) {
+                temp = new ArrayList<>();
+                for (int j = 0; j < N; j++) {
+                    if (copy[j][i] == 0) continue;
+                    temp.add(copy[j][i]);
+                    copy[j][i] = 0;
+                }
+                for (int j = 0; j < temp.size(); j++) {
+                    copy[j][i] = temp.get(j);
+                }
+            }
+        } else if (dir == 1) {  // 하
+            for (int i = 0; i < N; i++) {
+                temp = new ArrayList<>();
+                for (int j = N - 1; j >= 0; j--) {
+                    if (copy[j][i] == 0) continue;
+                    temp.add(copy[j][i]);
+                    copy[j][i] = 0;
+                }
+                for (int j = 0; j < temp.size(); j++) {
+                    copy[N - 1 - j][i] = temp.get(j);
+                }
+            }
+        } else if (dir == 2) {  // 좌
+            for (int i = 0; i < N; i++) {
+                temp = new ArrayList<>();
+                for (int j = 0; j < N; j++) {
+                    if (copy[i][j] == 0) continue;
+                    temp.add(copy[i][j]);
+                    copy[i][j] = 0;
+                }
+                for (int j = 0; j < temp.size(); j++) {
+                    copy[i][j] = temp.get(j);
+                }
+            }
+        } else if (dir == 3) {  // 우
+            for (int i = 0; i < N; i++) {
+                temp = new ArrayList<>();
+                for (int j = N - 1; j >= 0; j--) {
+                    if (copy[i][j] == 0) continue;
+                    temp.add(copy[i][j]);
+                    copy[i][j] = 0;
+                }
+                for (int j = 0; j < temp.size(); j++) {
+                    copy[i][N - 1 - j] = temp.get(j);
+                }
+            }
+        }
+        return copy;
+    }
+
+    //합치기
+    public static int[][] addUp(int[][] copy, int dir) {
+        if (dir == 0) {  // 상
             for (int i = 0; i < N - 1; i++) {
                 for (int j = 0; j < N; j++) {
-
-                    // 0이면 계산 할 필요 없음
                     if (copy[i][j] == copy[i + 1][j]) {
                         copy[i][j] *= 2;
                         copy[i + 1][j] = 0;
                     }
                 }
             }
-        } else if (dir == 1) {  // 아래로 밀치기
+        } else if (dir == 1) {  // 하
             for (int i = N - 1; i > 0; i--) {
                 for (int j = 0; j < N; j++) {
                     if (copy[i][j] == copy[i - 1][j]) {
@@ -58,7 +121,7 @@ public class Main {
                     }
                 }
             }
-        } else if (dir == 2) {  // 좌로 밀치기
+        } else if (dir == 2) {  // 좌
             for (int i = 0; i < N - 1; i++) {
                 for (int j = 0; j < N; j++) {
                     if (copy[j][i] == copy[j][i + 1]) {
@@ -67,7 +130,7 @@ public class Main {
                     }
                 }
             }
-        } else {  // 우로 밀치기
+        } else if (dir == 3) {  // 우
             for (int i = N - 1; i > 0; i--) {
                 for (int j = 0; j < N; j++) {
                     if (copy[j][i] == copy[j][i - 1]) {
@@ -77,90 +140,33 @@ public class Main {
                 }
             }
         }
-        return moveInDirection(copy, dir); // 정리되었으니 다시 정렬
-    }
-
-    static int[][] moveInDirection(int[][] copy, int dir) {
-        if (dir == 0) {  // 상
-            for (int i = 0; i < N; i++) {
-                List<Integer> temp = new ArrayList<>();
-                for (int j = 0; j < N; j++) {
-                    if (copy[j][i] != 0) {
-                        temp.add(copy[j][i]);
-                        copy[j][i] = 0;
-                    }
-                }
-                for (int j = 0; j < temp.size(); j++) {
-                    copy[j][i] = temp.get(j);
-                }
-            }
-        } else if (dir == 1) {  // 하
-            for (int i = 0; i < N; i++) {
-                List<Integer> temp = new ArrayList<>();
-                for (int j = N - 1; j >= 0; j--) {
-                    if (copy[j][i] != 0) {
-                        temp.add(copy[j][i]);
-                        copy[j][i] = 0;
-                    }
-                }
-                for (int j = 0; j < temp.size(); j++) {
-                    copy[N - 1 - j][i] = temp.get(j);
-                }
-            }
-        } else if (dir == 2) {  // 좌
-            for (int i = 0; i < N; i++) {
-                List<Integer> temp = new ArrayList<>();
-                for (int j = 0; j < N; j++) {
-                    if (copy[i][j] != 0) {
-                        temp.add(copy[i][j]);
-                        copy[i][j] = 0;
-                    }
-                }
-                for (int j = 0; j < temp.size(); j++) {
-                    copy[i][j] = temp.get(j);
-                }
-            }
-        } else {  // 우
-            for (int i = 0; i < N; i++) {
-                List<Integer> temp = new ArrayList<>();
-                for (int j = N - 1; j >= 0; j--) {
-                    if (copy[i][j] != 0) {
-                        temp.add(copy[i][j]);
-                        copy[i][j] = 0;
-                    }
-                }
-                for (int j = 0; j < temp.size(); j++) {
-                    copy[i][N - j - 1] = temp.get(j);
-                }
-            }
-        }
         return copy;
     }
 
-    static int[][] copyArr() {
-        int[][] copy = new int[N][N];
-        for (int i = 0; i < N; i++)
-            copy[i] = arr[i].clone();
-        return copy;
-    }
-
-    static int findMax(int[][] copy) {
-        int max = 0;
+    public static int findMax(int[][] copy) {
+        int result = 0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                max = Math.max(max, copy[i][j]);
+                if (result < copy[i][j]) result = copy[i][j];
             }
         }
-        return max;
+        return result;
     }
 
-    static void setPermutation(int depth) {
-        if (depth == 5) {
-            int[][] copy = copyArr();
-            for (int i = 0; i < permutation.length; i++) {
-                copy = pushInDirection(copy, permutation[i]);
+    public static int[][] copyOriginal() {
+        int[][] copy = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                copy[i][j] = original[i][j];
             }
-            answer = Math.max(answer, findMax(copy));
+        }
+        return copy;
+    }
+
+    public static void setPermutation(int depth) {
+        if (depth == 5) {
+            int result = game(copyOriginal());
+            answer = Math.max(result, answer);
             return;
         }
         for (int i = 0; i < 4; i++) {
@@ -168,4 +174,5 @@ public class Main {
             setPermutation(depth + 1);
         }
     }
+
 }
