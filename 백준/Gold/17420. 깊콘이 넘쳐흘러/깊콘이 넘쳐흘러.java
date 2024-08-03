@@ -67,10 +67,17 @@ public class Main {
     // 최대 기프티콘 남은 날 반환
     public static long calc(int start, int end, long previous) {
         long max = 0;
+        int cnt = 0;
         for (int i = start; i < end; i++) {
-            while (arr[i][1] > arr[i][0] || arr[i][0] < previous) {
-                arr[i][0] += 30;
-                answer++;
+            if (arr[i][0] < previous) {
+                cnt = (int) Math.ceil((double) (previous - arr[i][0]) / 30);
+                arr[i][0] += 30L * cnt;
+                answer += cnt;
+            }
+            if (arr[i][1] > arr[i][0]) {
+                cnt = (int) Math.ceil((double) (arr[i][1] - arr[i][0]) / 30);
+                arr[i][0] += 30L * cnt;
+                answer += cnt;
             }
             max = Math.max(max, arr[i][0]);
         }
