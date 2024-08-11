@@ -4,24 +4,16 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
-/*
-N : 50 이하의 자연수
-
-모든 컴퓨터가 연결되어 있는지 확인 필요
-모든 컴퓨터를 방문해야 함. -> 그래프 알고리즘
-
-*/
 public class Main {
     static int N;
     static int total = 0;
-    static PriorityQueue<Line> pq = new PriorityQueue<>((a,b)-> a.v - b.v); // 배열 값은 i 부터 j까지 가는 길이
+    static PriorityQueue<Line> pq = new PriorityQueue<>((a,b)-> a.v - b.v);
     static int[] parent;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-
         parent = new int[N + 1];
-        for(int i =1 ;i <= N; i++) parent[i] = i;
+        for(int i =1; i <= N; i++) parent[i] = i;
 
         for (int i = 1; i <= N; i++) {
             String str = br.readLine();
@@ -41,7 +33,6 @@ public class Main {
                             total += a - 38;
                         }
                     }
-
                 }
             }
         }
@@ -65,7 +56,6 @@ public class Main {
         if(cnt != N-1) return -1;
         return result;
     }
-    // false -> 이미 같은 부모
     public static boolean union(int a, int b) {
         int rootA = find(a);
         int rootB = find(b);
@@ -75,18 +65,15 @@ public class Main {
         return true;
     }
 
-    // 부모 노드 찾기
     public static int find(int a) {
         if(a == parent[a]) return a;
         return parent[a] = find(parent[a]);
     }
 
-
     static class Line {
-        int s; // 시작
-        int e; // 끝
-        int v; // 거리
-
+        int s;
+        int e;
+        int v;
         public Line(int s, int e, int v) {
             this.s = s;
             this.e = e;
