@@ -46,14 +46,8 @@ public class Main {
             }
         }
         int result = kruskal();
-        int flag = find(1);
-        for(int i = 2; i <= N; i++) {
-            if(flag != find(parent[i])) {
-                System.out.println(-1);
-                System.exit(0);
-            }
-        }
-        System.out.println(total - result);
+        if(result == -1) System.out.println(-1);
+        else System.out.println(total - result);
     }
 
     // mst 반환
@@ -68,6 +62,7 @@ public class Main {
             }
             if(cnt == N - 1) break;
         }
+        if(cnt != N-1) return -1;
         return result;
     }
     // false -> 이미 같은 부모
