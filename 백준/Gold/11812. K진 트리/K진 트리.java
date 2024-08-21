@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ public class Main {
 
     /*
     항상 left <= right
-    1) 깊이 탐색
     */
     public static int LCA(long left, long right) {
         int dist = 0;
@@ -81,17 +79,9 @@ public class Main {
         }
         while (left != right) {
             if (left == right) return dist;
-
-            if (leftDepth != 0) {
-                left = findParent(leftDepth, left);
-                leftDepth--;
-                dist++;
-            }
-            if (rightDepth != 0) {
-                right = findParent(rightDepth, right);
-                rightDepth--;
-                dist++;
-            }
+            left = findParent(leftDepth--, left);
+            right = findParent(rightDepth--, right);
+            dist += 2;
         }
         return dist;
     }
