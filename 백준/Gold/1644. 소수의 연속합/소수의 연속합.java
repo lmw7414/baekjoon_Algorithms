@@ -40,7 +40,7 @@ public class Main {
     public static void prime() {
         for (int i = 2; i <= Math.sqrt(N); i++) {
             if (arr[i]) continue;
-            for (int j = i * 2; j <= N; j += i) {
+            for (int j = i * i; j <= N; j += i) {
                 arr[j] = true;
             }
         }
