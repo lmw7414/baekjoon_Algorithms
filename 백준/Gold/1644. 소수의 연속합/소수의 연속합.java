@@ -16,7 +16,7 @@ public class Main {
             System.out.println(0);
             System.exit(0);
         }
-        
+
         int left = 2;
         int right = 2;
         int cur = 2;
@@ -38,7 +38,7 @@ public class Main {
     }
 
     public static void prime() {
-        for (int i = 2; i <= N; i++) {
+        for (int i = 2; i <= Math.sqrt(N); i++) {
             if (arr[i]) continue;
             for (int j = i * 2; j <= N; j += i) {
                 arr[j] = true;
