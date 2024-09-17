@@ -1,78 +1,55 @@
+import java.util.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringTokenizer;
 
 public class Main {
-    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringBuilder sb = new StringBuilder();
+    static int N;
+    static int[] arr, index;
+    static List<Integer> list = new ArrayList<>(); // 수열의 길이를 저장하기 위함
 
     public static void main(String[] args) throws IOException {
-        int n = Integer.parseInt(br.readLine());
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        // 이분탐색을 통해 증가하는 수열을 저장할 객체
-        List<Integer> list = new ArrayList<>();
-        // 입력된 수열을 저장
-        int arr[] = new int[n + 1];
-        // 입력된 각 수열의 위치를 저장
-        int indexArr[] = new int[n + 1];
-
-        // 수열을 입력받아 저장한다.
-        for(int i = 1 ; i <= n; i++) arr[i] = Integer.parseInt(st.nextToken());
-
         list.add(Integer.MIN_VALUE);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        arr = new int[N + 1];
+        index = new int[N + 1];
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        for(int i = 1 ; i <= n; i++){
-            int num = arr[i];
-            int left = 1;
-            int right = list.size() - 1;
+        for (int i = 1; i <= N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
 
-            // 확인하는 숫자가 수열의 마지막 수보다 큰 경우
-            // 수열에 추가해준다.
-            if(num > list.get(list.size() - 1)) {
-                list.add(num);
-                indexArr[i] = list.size() - 1;
-            }
-            // 확인하는 숫자가 수열의 마지막 수보다 작은 경우
-            else{
-                while(left < right){
-                    int mid = (left + right) >> 1;
-
-                    if(list.get(mid) >= num) right = mid;
-                    else left = mid + 1;
-                }
-                list.set(right, num);
-                indexArr[i] = right;
+        for (int i = 1; i <= N; i++) {
+            if (arr[i] > list.get(list.size() - 1)) {
+                list.add(arr[i]);
+                index[i] = list.size() - 1;
+            } else {
+                int idx = binarySearch(1, list.size() - 1, arr[i]);
+                list.set(idx, arr[i]);
+                index[i] = idx;
             }
         }
-        // 최장 길이 출력
-        sb.append(list.size() - 1 + "\n");
-        // 역추적 경로를 저장할 stack
-        Stack<Integer> stack = new Stack();
-
-        // 현재 찾길 원하는 증가수열의 인덱스 값
-        int index = list.size() - 1;
-
-        for(int i = n; i > 0; i--){
-            // 찾길 원하는 인덱스와 같은 경우
-            if(indexArr[i] == index){
-                // 찾길 원하는 인덱스를 하나 감소시킨다.
-                // 다음 인덱스의 값을 찾기 위해서
-                index--;
-                // stack에 경로를 추가한다.
+        System.out.println(list.size() - 1);
+        Stack<Integer> stack = new Stack<>();
+        int idx = list.size() - 1;
+        for (int i = index.length - 1; i > 0; i--) {
+            if (index[i] == idx) {
                 stack.push(arr[i]);
+                idx--;
             }
         }
+        StringBuilder sb = new StringBuilder();
+        while (!stack.isEmpty()) sb.append(stack.pop()).append(" ");
+        System.out.print(sb.toString());
+    }
 
-        // 스택에서 꺼내며 찾는다.
-        while (!stack.isEmpty()){
-            sb.append(stack.pop() + " ");
+    // key값 보다 크거나 같은 수의 배열 idx 반환
+    public static int binarySearch(int left, int right, int key) {
+        int mid = (left + right) / 2;
+        if (left < right) {
+            if (list.get(mid) < key) return binarySearch(mid + 1, right, key);
+            else if (list.get(mid) >= key) return binarySearch(left, mid, key);
         }
+        return right;
 
-        bw.write(sb.toString());
-        bw.close();
-        br.close();
     }
 }
