@@ -1,96 +1,97 @@
-
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
+	static BufferedReader br;
+	static BufferedWriter bw;
+	static StringBuilder sb;
+	static StringTokenizer st;
+	static int n, m, x, a, b, t, dist[], r_dist[];
+	static ArrayList<Node> adj[], r_adj[];
 
-    static int INF = Integer.MAX_VALUE;
-    static int N;
-    static int M;
-    static int X;
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+	public static void main(String[] args) throws IOException {
+		br = new BufferedReader(new InputStreamReader(System.in));
+		bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		st = new StringTokenizer(br.readLine());
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		x = Integer.parseInt(st.nextToken());
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        X = Integer.parseInt(st.nextToken());
+		adj = new ArrayList[n + 1];
+		r_adj = new ArrayList[n + 1];
+		dist = new int[n+1];
+		r_dist = new int[n+1];
+		Arrays.fill(dist, Integer.MAX_VALUE);
+		Arrays.fill(r_dist, Integer.MAX_VALUE);
 
-        HashMap<Integer, List<Line>> map = new HashMap<>();
-        for(int i = 0; i < M; i++) {
-            int v1, v2, weight;
+		for (int i = 0; i <= n; i++) {
+			adj[i] = new ArrayList<>();
+			r_adj[i] = new ArrayList<>();
+		}
 
-            st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < m; i++) {
+			st = new StringTokenizer(br.readLine());
+			a = Integer.parseInt(st.nextToken());
+			b = Integer.parseInt(st.nextToken());
+			t = Integer.parseInt(st.nextToken());
+			adj[a].add(new Node(b, t));
+			r_adj[b].add(new Node(a, t));
+		}
 
-            v1 = Integer.parseInt(st.nextToken());
-            v2 = Integer.parseInt(st.nextToken());
-            weight = Integer.parseInt(st.nextToken());
+		// i~x 구하기
+		dijkstra(adj, dist, x);
+		
+		// x~i 구하기
+		dijkstra(r_adj, r_dist, x);
+		
+		// i~x + x~i 중 최댓값 구하기
+		int max = 0;
+		for(int i=1; i<=n; i++) {
+			max = Math.max(max, dist[i] + r_dist[i]);
+		}
+		
+		System.out.println(max);
 
-            if(!map.containsKey(v1)) {
-                map.put(v1, new ArrayList<>());
-                map.get(v1).add(new Line(v1, v2, weight));
-            } else {
-                map.get(v1).add(new Line(v1, v2, weight));
-            }
-        }
-        int[] toParty = new int[N + 1];
-        int[] toHome = new int[N + 1];
-        int[] answer = new int[N + 1];
-        for(int i = 1; i <= N; i++) {
-            if(i == X)
-                continue;
-            toParty[i] = dijkstra(map, i, X);
-        }
-        for(int i = 1; i <= N; i++) {
-            if(i == X)
-                continue;
-            toHome[i] = dijkstra(map, X, i);
-        }
+	}
 
-        for(int i = 1; i <= N; i++) {
-            answer[i] = toParty[i] + toHome[i];
-        }
-        System.out.println(Arrays.stream(answer).max().getAsInt());
+	static void dijkstra(ArrayList<Node>[] arr, int[] dist, int start) {
+		PriorityQueue<Node> q = new PriorityQueue<Node>();
+		q.add(new Node(start, 0));
+		dist[start] = 0;
+		
+		while(!q.isEmpty()) {
+			Node now = q.poll();
+			for(Node next : arr[now.node]) {
+				if (dist[next.node] > dist[now.node] + next.time) {
+					dist[next.node] = dist[now.node] + next.time;
+					q.add(new Node(next.node, dist[next.node]));
+				}
+			}
+		}
+	}
 
+	static class Node implements Comparable<Node> {
+		int node;
+		int time;
 
-    }
+		public Node(int node, int time) {
+			super();
+			this.node = node;
+			this.time = time;
+		}
 
-    static int dijkstra(HashMap<Integer, List<Line>> map, int start, int dest) {
-        int[] answer = new int[N+1];
-        PriorityQueue<Line> pq = new PriorityQueue<>((a1, a2) -> a1.weight - a2.weight);
+		@Override
+		public int compareTo(Node o) {
+			return this.time - o.time;
+		}
 
-        Arrays.fill(answer, INF);
-        answer[start] = 0;
-        pq.add(new Line(start, start, 0));
+	}
 
-        while(!pq.isEmpty()) {
-            Line cur = pq.poll();
-
-            for(Line v : map.get(cur.v2)) {
-                if(answer[v.v2] > answer[v.v1] + v.weight) {
-                    answer[v.v2] = answer[v.v1] + v.weight;
-                    pq.add(v);
-                }
-            }
-
-
-
-        }
-        return answer[dest];
-    }
-
-
-    static class Line {
-        int v1;
-        int v2;
-        int weight;
-
-        Line(int v1, int v2, int weight) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.weight = weight;
-        }
-    }
 }
