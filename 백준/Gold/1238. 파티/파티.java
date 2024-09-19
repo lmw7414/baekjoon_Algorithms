@@ -1,97 +1,75 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-	static BufferedReader br;
-	static BufferedWriter bw;
-	static StringBuilder sb;
-	static StringTokenizer st;
-	static int n, m, x, a, b, t, dist[], r_dist[];
-	static ArrayList<Node> adj[], r_adj[];
+    static int N, M, X;
+    static int INF = 987654321;
+    static List<Edge>[] adjList1, adjList2; // 수열의 길이를 저장하기 위함
+    static int[] goParty, toHome;
 
-	public static void main(String[] args) throws IOException {
-		br = new BufferedReader(new InputStreamReader(System.in));
-		bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		st = new StringTokenizer(br.readLine());
-		n = Integer.parseInt(st.nextToken());
-		m = Integer.parseInt(st.nextToken());
-		x = Integer.parseInt(st.nextToken());
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        X = Integer.parseInt(st.nextToken());
+        adjList1 = new List[N + 1];
+        adjList2 = new List[N + 1];
+        for (int i = 1; i <= N; i++) {
+            adjList1[i] = new ArrayList<>();
+            adjList2[i] = new ArrayList<>();
+        }
 
-		adj = new ArrayList[n + 1];
-		r_adj = new ArrayList[n + 1];
-		dist = new int[n+1];
-		r_dist = new int[n+1];
-		Arrays.fill(dist, Integer.MAX_VALUE);
-		Arrays.fill(r_dist, Integer.MAX_VALUE);
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
+            adjList1[start].add(new Edge(end, weight));
+            adjList2[end].add(new Edge(start, weight));
+        }
 
-		for (int i = 0; i <= n; i++) {
-			adj[i] = new ArrayList<>();
-			r_adj[i] = new ArrayList<>();
-		}
+        goParty = dijkstra(adjList1, X);
+        toHome = dijkstra(adjList2, X);
 
-		for (int i = 0; i < m; i++) {
-			st = new StringTokenizer(br.readLine());
-			a = Integer.parseInt(st.nextToken());
-			b = Integer.parseInt(st.nextToken());
-			t = Integer.parseInt(st.nextToken());
-			adj[a].add(new Node(b, t));
-			r_adj[b].add(new Node(a, t));
-		}
+        int max = 0;
+        for (int i = 1; i <= N; i++) {
+            if (i == X) continue;
+            max = Math.max(max, goParty[i] + toHome[i]);
+        }
+        System.out.println(max);
+    }
 
-		// i~x 구하기
-		dijkstra(adj, dist, x);
-		
-		// x~i 구하기
-		dijkstra(r_adj, r_dist, x);
-		
-		// i~x + x~i 중 최댓값 구하기
-		int max = 0;
-		for(int i=1; i<=n; i++) {
-			max = Math.max(max, dist[i] + r_dist[i]);
-		}
-		
-		System.out.println(max);
+    public static int[] dijkstra(List<Edge>[] adjList, int start) {
+        int[] dist = initDistArr(start);
+        PriorityQueue<Edge> pq = new PriorityQueue<>((a1, b1) -> a1.w - b1.w);
+        pq.add(new Edge(start, 0));
 
-	}
+        while (!pq.isEmpty()) {
+            Edge cur = pq.poll();
+            if (cur.w > dist[cur.u]) continue;
+            for (Edge edge : adjList[cur.u]) {
+                if (dist[edge.u] <= dist[cur.u] + edge.w) continue;
+                dist[edge.u] = dist[cur.u] + edge.w;
+                pq.add(new Edge(edge.u, dist[cur.u] + edge.w));
+            }
+        }
+        return dist;
+    }
 
-	static void dijkstra(ArrayList<Node>[] arr, int[] dist, int start) {
-		PriorityQueue<Node> q = new PriorityQueue<Node>();
-		q.add(new Node(start, 0));
-		dist[start] = 0;
-		
-		while(!q.isEmpty()) {
-			Node now = q.poll();
-			for(Node next : arr[now.node]) {
-				if (dist[next.node] > dist[now.node] + next.time) {
-					dist[next.node] = dist[now.node] + next.time;
-					q.add(new Node(next.node, dist[next.node]));
-				}
-			}
-		}
-	}
+    public static int[] initDistArr(int start) {
+        int[] dist = new int[N + 1];
+        Arrays.fill(dist, INF);
+        dist[start] = 0;
+        return dist;
+    }
 
-	static class Node implements Comparable<Node> {
-		int node;
-		int time;
+    static class Edge {
+        int u, w;
 
-		public Node(int node, int time) {
-			super();
-			this.node = node;
-			this.time = time;
-		}
-
-		@Override
-		public int compareTo(Node o) {
-			return this.time - o.time;
-		}
-
-	}
-
+        public Edge(int u, int w) {
+            this.u = u;
+            this.w = w;
+        }
+    }
 }
