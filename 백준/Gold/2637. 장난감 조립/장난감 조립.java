@@ -6,14 +6,14 @@ import java.util.*;
 public class Main {
     static int N, M;
     static int[][] dp;
-    static Set<Integer> midToy = new HashSet<>();
+    static boolean[] midToy;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         M = Integer.parseInt(br.readLine());
         dp = new int[N + 1][101];
-
+        midToy = new boolean[101];
         StringTokenizer st;
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -21,11 +21,11 @@ public class Main {
             int Y = Integer.parseInt(st.nextToken());
             int K = Integer.parseInt(st.nextToken());
             dp[X][Y] = K; // X번 부품의 K부품 개수 = Y
-            midToy.add(X);
+            midToy[X] = true;
         }
         int[] result = calc(N);
         for (int i = 1; i <= N; i++) {
-            if (midToy.contains(i)) continue;
+            if (midToy[i]) continue;
             System.out.println(i + " " + result[i]);
         }
     }
@@ -33,7 +33,7 @@ public class Main {
     public static int[] calc(int idx) {
         int[] result = new int[N + 1];
         for (int i = 1; i < N; i++) {
-            if (!midToy.contains(i)) {
+            if (!midToy[i]) {
                 result[i] = dp[idx][i];
                 continue;
             }
