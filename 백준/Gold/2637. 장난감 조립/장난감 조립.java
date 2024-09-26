@@ -3,11 +3,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-/**
- * 장난감을 만듦 -> 기본부품 + 중간 부품
- * 중간 부품 -> 여러개의 기본 부품으로 이루어져 있음
- */
-
 public class Main {
     static int N, M;
     static int[][] dp;
@@ -20,7 +15,6 @@ public class Main {
         dp = new int[N + 1][N + 1];
 
         StringTokenizer st;
-
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             int X = Integer.parseInt(st.nextToken());
