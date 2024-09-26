@@ -12,7 +12,7 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         M = Integer.parseInt(br.readLine());
-        dp = new int[N + 1][N + 1];
+        dp = new int[N + 1][101];
 
         StringTokenizer st;
         for (int i = 0; i < M; i++) {
@@ -32,7 +32,7 @@ public class Main {
 
     public static int[] calc(int idx) {
         int[] result = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
+        for (int i = 1; i < N; i++) {
             if (!midToy.contains(i)) {
                 result[i] = dp[idx][i];
                 continue;
@@ -41,7 +41,7 @@ public class Main {
             int scope = dp[idx][i];
             dp[idx][i] = 0;
             int[] k = calc(i);
-            for (int d = 1; d <= N; d++) {
+            for (int d = 1; d < N; d++) {
                 dp[idx][d] += scope * k[d];
                 result[d] = dp[idx][d];
             }
