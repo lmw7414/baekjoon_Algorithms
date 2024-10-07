@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Main {
     static int N, M;  // 사람의 수, 파티의 수
-    static List<List<Integer>> parties = new ArrayList<>();
+    static Set<List<Integer>> parties = Collections.newSetFromMap(new IdentityHashMap<>());
     static List<List<Integer>>[] list;
     static boolean[] truer;
     static Queue<Integer> queue = new ArrayDeque<>();
@@ -17,7 +17,7 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
         list = new List[N + 1];
         truer = new boolean[N + 1];
-        for (int i = 1; i <= N; i++) list[i] = new ArrayList<List<Integer>>();
+        for (int i = 1; i <= N; i++) list[i] = new ArrayList<>();
         st = new StringTokenizer(br.readLine());
         int trueSize = Integer.parseInt(st.nextToken()); // 진실을 아는 사람의 수
 
@@ -48,13 +48,7 @@ public class Main {
                 parties.remove(p);
             }
         }
-        int answer = 0;
-        for (List<Integer> party : parties) {
-            if (party == null) continue;
-            answer++;
-        }
-        System.out.println(answer);
-
+        System.out.println(parties.size());
     }
 
 }
