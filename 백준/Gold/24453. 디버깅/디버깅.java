@@ -23,13 +23,6 @@ public class Main {
         X = Integer.parseInt(st.nextToken());
         Y = Integer.parseInt(st.nextToken());
 
-        for (int i = 1; i < M; i++) {
-            if (arr[i] - arr[i - 1] - 1 >= X) {
-                System.out.println(M - Y);
-                System.exit(0);
-            }
-        }
-
         Queue<Integer> queue = new ArrayDeque<>();
         int errIdx = 0;
         for (int i = 0; i < M; i++) {
