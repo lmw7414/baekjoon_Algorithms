@@ -1,12 +1,11 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.StringTokenizer;
 
 public class Main {
-    static boolean[] arr = new boolean[2000001]; // 2 * 10^12의 제곱근
 
     public static void main(String[] args) throws Exception {
-        init();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
         int T = Integer.parseInt(br.readLine());
@@ -23,28 +22,12 @@ public class Main {
             if (sum % 2 == 0) { // 합이 짝수 인 경우
                 sb.append("YES").append("\n");
             } else {
-                if (isPrime(sum - 2)) sb.append("YES").append("\n");
+                BigInteger bi = new BigInteger(String.valueOf(sum - 2));
+                if (bi.isProbablePrime(10)) sb.append("YES").append("\n");
                 else sb.append("NO").append("\n");
             }
         }
         System.out.print(sb.toString());
     }
 
-    public static void init() {
-        for (int i = 2; i < arr.length; i++) {
-            if (arr[i]) continue;
-            for (int j = i * 2; j < arr.length; j += i) {
-                arr[j] = true;
-            }
-        }
-    }
-
-    public static boolean isPrime(long num) {
-        if (num <= arr.length) return !arr[(int) num];
-        for (int i = 2; i < arr.length; i++) {
-            if (arr[i]) continue;  // 소수가 아닌 경우
-            if (num % i == 0) return false;
-        }
-        return true;
-    }
 }
