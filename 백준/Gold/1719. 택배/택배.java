@@ -45,13 +45,14 @@ public class Main {
                 }
             }
         }
-
+        StringBuilder sb = new StringBuilder();
         for(int i = 1; i <= N; i++) {
             for(int j = 1; j <= N; j++) {
-                if(i == j) System.out.print("- ");
-                else System.out.print(answer[i][j] + " ");
+                if(i == j) sb.append("- ");
+                else sb.append(answer[i][j]).append(" ");
             }
-            System.out.println();
+            sb.append("\n");
         }
+        System.out.print(sb);
     }
 }
