@@ -40,7 +40,6 @@ public class Main {
 
     // pc : 현재 남은 pin의 개수, m : 움직인 횟수
     public static void calc(int x, int y, int pc, int m) {
-        if(pc < 1) return;
         if (pinCnt > pc) {
             pinCnt = pc;
             move = m;
