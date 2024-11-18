@@ -39,6 +39,9 @@ public class Main {
             }
         }
 
+//        for(int i = 0; i <= target.length(); i++) System.out.print(dp[i] + " ");
+//        System.out.println();
+
         if(dp[target.length()] == INF) System.out.println(-1);
         else System.out.println(dp[target.length()]);
     }
@@ -69,25 +72,17 @@ public class Main {
     }
 
     public static boolean isPossible(String str1, String str2) {
-        HashMap<Character, Integer> flag1 = new HashMap<>();
-        HashMap<Character, Integer> flag2 = new HashMap<>();
+        int[] flag1 = new int[26];
+        int[] flag2 = new int[26];
         for(int i = 0; i < str1.length(); i++) {
             char s1 = str1.charAt(i);
             char s2 = str2.charAt(i);
-            if(flag1.containsKey(s1)) {
-                flag1.replace(s1, flag1.get(s1)+1);
-            } else {
-                flag1.put(s1, 1);
-            }
-            if(flag2.containsKey(s2)) {
-                flag2.replace(s2, flag2.get(s2)+1);
-            } else {
-                flag2.put(s2, 1);
-            }
+            flag1[s1 - 'a']++;
+            flag2[s2 - 'a']++;
 
         }
-        for(Character c : flag1.keySet()) {
-            if(!Objects.equals(flag1.get(c), flag2.get(c))) return false;
+        for(int i = 0; i < 26; i++) {
+            if(flag1[i] != flag2[i]) return false;
         }
         return true;
     }
