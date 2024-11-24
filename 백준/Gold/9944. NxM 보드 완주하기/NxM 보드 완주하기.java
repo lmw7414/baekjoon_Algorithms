@@ -59,7 +59,7 @@ public class Main {
 
     // 다음 위치, 방문 개수, 현재 단계
     public static void DFS(int x, int y, int visitCnt, int cnt) {
-        if (cnt > Math.min(INF, answer)) return;
+        if (cnt >= Math.min(INF, answer)) return;
         if (visitCnt == N * M) {
             answer = Math.min(answer, cnt);
             return;
