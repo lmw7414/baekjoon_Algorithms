@@ -53,14 +53,14 @@ public class Main {
     }
 
     public static int bs(int left, int right, int key) {
-        if (left > right) return -1;
-        int mid = (left + right) / 2;
-        if (arr.get(mid) > key) {
-            return bs(left, mid - 1, key);
-        } else if (arr.get(mid) < key) {
-            return bs(mid + 1, right, key);
-        } else {
-            return mid;
+        while(left <= right) {
+            int mid = (left + right) / 2;
+            if(arr.get(mid) > key) {
+                right = mid - 1;
+            } else if(arr.get(mid) < key) {
+                left = mid + 1;
+            } else return mid;
         }
+        return -1;
     }
 }
