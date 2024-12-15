@@ -15,19 +15,13 @@ public class Main {
 
         for (int t = 0; t < T; t++) {
             int N = Integer.parseInt(br.readLine());
-            PriorityQueue<String> pq = new PriorityQueue<>((a1, b1) -> a1.length() - b1.length()); // 문자열 길이 순 정렬
             Node head = new Node('s');
-            for (int n = 0; n < N; n++) {
-                pq.add(br.readLine());
-            }
             boolean flag = true;
-            while (!pq.isEmpty()) {
-                String str = pq.poll();
+            for (int n = 0; n < N; n++) {
+                String str = br.readLine();
+                if(!flag) continue;
                 boolean result = add(head, str, 0);
-                if (!result) {
-                    flag = false;
-                    break;
-                }
+                if (!result) flag = false;
             }
             if (flag) sb.append("YES\n");
         }
@@ -35,7 +29,12 @@ public class Main {
     }
 
     public static boolean add(Node parent, String str, int idx) {
+
         if (parent.isEnd) {
+            sb.append("NO\n");
+            return false;
+        }
+        if(str.length() <= idx && !parent.child.isEmpty()) {
             sb.append("NO\n");
             return false;
         }
@@ -62,6 +61,6 @@ public class Main {
             child = new HashMap<>();
             isEnd = false;
         }
-        
+
     }
 }
