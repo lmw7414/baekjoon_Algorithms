@@ -23,7 +23,7 @@ public class Main {
             boolean flag = true;
             while (!pq.isEmpty()) {
                 String str = pq.poll();
-                boolean result = add(head, str);
+                boolean result = add(head, str, 0);
                 if (!result) {
                     flag = false;
                     break;
@@ -34,21 +34,21 @@ public class Main {
         System.out.print(sb);
     }
 
-    public static boolean add(Node parent, String str) {
+    public static boolean add(Node parent, String str, int idx) {
         if (parent.isEnd) {
             sb.append("NO\n");
             return false;
         }
-        if (str.isEmpty()) {
+        if (str.length() <= idx) {
             parent.isEnd = true;
             return true;
         }
-        char key = str.charAt(0);
+        char key = str.charAt(idx);
         if (parent.child.containsKey(key)) {
-            return add(parent.child.get(key), str.substring(1));
+            return add(parent.child.get(key), str, idx + 1);
         } else {
             parent.child.put(key, new Node(key));
-            return add(parent.child.get(key), str.substring(1));
+            return add(parent.child.get(key), str, idx + 1);
         }
     }
 
@@ -62,18 +62,6 @@ public class Main {
             child = new HashMap<>();
             isEnd = false;
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node node = (Node) o;
-            return data == node.data;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(data);
-        }
+        
     }
 }
