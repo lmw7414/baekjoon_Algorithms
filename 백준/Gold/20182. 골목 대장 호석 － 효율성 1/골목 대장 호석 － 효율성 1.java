@@ -26,10 +26,12 @@ public class Main {
             int from = Integer.parseInt(st.nextToken());
             int to = Integer.parseInt(st.nextToken());
             int weight = Integer.parseInt(st.nextToken());
+            if(weight > C) continue;
 
             adjList[from].add(new Node(to, weight));
             adjList[to].add(new Node(from, weight));
         }
+        for(int i = 1; i <= N; i++) adjList[i].sort((a, b) -> a.w - b.w);
 
         calc(A, 0, 0);
         if(pride != Integer.MAX_VALUE) System.out.println(pride);
@@ -40,8 +42,9 @@ public class Main {
     // 최대 비용이 최소가 되도록
     public static void calc(int cur, int maxCost, int curCost) {
         if (curCost > C) return;
+        if(pride < maxCost) return;
         if (cur == B) {
-            pride = Math.min(pride, maxCost);
+            pride = maxCost;
             return;
         }
         visit[cur] = true;
