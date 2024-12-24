@@ -8,7 +8,8 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N, K;
-    static long[] prefix, arr;
+    static long[] prefix;
+    static int[] arr;
     static Map<Integer, Integer> hm = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
@@ -20,16 +21,15 @@ public class Main {
         st = new StringTokenizer(br.readLine());
         for (int k = 0; k < K; k++) {
             int num = Integer.parseInt(st.nextToken());
-            if (hm.containsKey(num)) hm.replace(num, hm.get(num) + 1);
-            else hm.put(num, 1);
+            hm.put(num, hm.getOrDefault(num, 0) + 1);
         }
 
         prefix = new long[N + 1];
-        arr = new long[N];
-        //arr[0] = K;
+        arr = new int[N];
+        
         for (int key : hm.keySet()) {
             for (int i = 0; i < N; i+= key) {
-                arr[i] += (long) hm.get(key);
+                arr[i] += hm.get(key);
             }
         }
 
