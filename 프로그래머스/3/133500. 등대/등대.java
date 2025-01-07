@@ -5,6 +5,8 @@ Edge: N-1
 한 뱃길의 양쪽 끝 등대 중 적어도 하나는 켜져 있도록
 
 1. degree 1인 노드 탐색
+2. 리프 노드의 부모노드 불키기
+3. 불 킨 부모노드의 모든 길 제거
 */
 class Solution {
     static int answer = 0;
@@ -20,7 +22,6 @@ class Solution {
             adjList[edge[0]].add(edge[1]);
             adjList[edge[1]].add(edge[0]);
         }
-    
         calc(n);        
         return answer;
     }
@@ -39,10 +40,10 @@ class Solution {
     public void delete(int node) {
         for(int child : adjList[node]) {
             degree[child]--;
-            degree[node]--;
             adjList[child].remove(Integer.valueOf(node));
         }
         adjList[node] = null;
+        degree[node] = 0;
         answer++;
     }
     
