@@ -3,62 +3,98 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+/**
+ * [문제 해결 프로세스]
+ * 이미 만들어졌던 그림이라면?
+ * 새로 만들어진 그림이라면 등록
+ * 해시맵에 <String, Integer>: 이차원 배열을 String으로 풀어서
+ */
 public class Main {
-
-    static String correct = "123456780";
-    static Map<String, Integer> map = new HashMap<>();
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
+    static Map<String, Integer> visit = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
+        int[][] arr = new int[3][3];
 
-        String start = "";
         for (int i = 0; i < 3; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < 3; j++) {
-                int input = Integer.parseInt(st.nextToken());
-                start += input;
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        map.put(start, 0);
-        System.out.println(bfs(start));
+        System.out.println(calc(arr));
     }
 
-    static int bfs(String start) {
-        Queue<String> queue = new LinkedList<>();
-        queue.add(start);
+    public static int calc(int[][] arr) {
+        Queue<String> queue = new ArrayDeque<>();
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        String str = parseToString(arr);
+        if (str.equals("123456780")) return 0;
+        queue.add(str);
+        visit.put(str, 0);
 
         while (!queue.isEmpty()) {
-            String pos = queue.poll();
-            int zeroLoc = pos.indexOf("0");
-            int x = zeroLoc / 3;
-            int y = zeroLoc % 3;
-            int move = map.get(pos);
+            String cur = queue.poll();
+            int cnt = visit.get(cur);
+            int[][] board = parseTo2DArr(cur);
+            int[] pos = find0(board);
+            for (int d = 0; d < 4; d++) {
+                int nx = pos[0] + dx[d];
+                int ny = pos[1] + dy[d];
+                if (nx < 0 || ny < 0 || nx >= 3 || ny >= 3) continue;
 
-            if(pos.equals(correct))
-                return move;
-
-            for (int i = 0; i < 4; i++) {
-                int nx = x + dx[i];
-                int ny = y + dy[i];
-                int nPos = nx * 3 + ny;
-
-                if(nx < 0 || ny < 0 || nx >= 3 || ny >= 3)
-                    continue;
-
-                char temp = pos.charAt(nPos);
-                String next = pos.replace(temp, 't');
-                next = next.replace('0', temp);
-                next = next.replace('t', '0');
-
-                if(!map.containsKey(next)) {
-                    queue.add(next);
-                    map.put(next, move + 1);
-                }
+                String newStr = swap(board, pos[0], pos[1], nx, ny);
+                if (visit.containsKey(newStr)) continue;
+                if (newStr.equals("123456780")) return cnt + 1;
+                visit.put(newStr, cnt + 1);
+                queue.add(newStr);
             }
         }
         return -1;
     }
+
+    public static String swap(int[][] arr, int x, int y, int nx, int ny) {
+        // swap
+        int temp = arr[nx][ny];
+        arr[nx][ny] = 0;
+        arr[x][y] = temp;
+        String str = parseToString(arr);
+
+        // return
+        temp = arr[nx][ny];
+        arr[nx][ny] = arr[x][y];
+        arr[x][y] = temp;
+
+        return str;
+    }
+
+    public static int[] find0(int[][] arr) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (arr[i][j] == 0) return new int[]{i, j};
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
+    public static String parseToString(int[][] arr) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                sb.append(arr[i][j]);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static int[][] parseTo2DArr(String str) {
+        int[][] arr = new int[3][3];
+        for (int i = 0; i < str.length(); i++) {
+            arr[i / 3][i % 3] = str.charAt(i) - '0';
+        }
+        return arr;
+    }
+
 }
