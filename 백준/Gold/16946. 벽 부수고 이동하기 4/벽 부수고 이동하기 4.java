@@ -85,7 +85,7 @@ public class Main {
                         size++;
                     }
                 }
-                hm.put(id, size);
+                hm.put(id, size % 10);
                 id++;
             }
         }
