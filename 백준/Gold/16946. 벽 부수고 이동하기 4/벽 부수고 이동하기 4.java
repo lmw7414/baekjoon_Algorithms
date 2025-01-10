@@ -5,6 +5,8 @@ import java.util.*;
 
 /**
  * [문제 해결 프로세스]
+ * 1. 영역전개 - 해시맵<ID, SIZE> 저장
+ * 2. 1인 곳에서 사방탐색하여 size 추가
  */
 public class Main {
 
@@ -34,13 +36,12 @@ public class Main {
     public static void calc() {
         int[] dx = {-1, 1, 0, 0};
         int[] dy = {0, 0, -1, 1};
-
+        Set<Integer> set = new HashSet<>();
         for (int n = 0; n < N; n++) {
             for (int m = 0; m < M; m++) {
                 if (arr[n][m] == 0) continue;
 
                 answer[n][m] = 1;
-                Set<Integer> set = new HashSet<>();
                 for (int d = 0; d < 4; d++) {
                     int nx = n + dx[d];
                     int ny = m + dy[d];
@@ -52,14 +53,16 @@ public class Main {
                     set.add(territory[nx][ny]);
                 }
                 answer[n][m] %= 10;
+                set.clear();
             }
         }
     }
 
     public static void setTerritory() {
+        Queue<int[]> queue = new ArrayDeque<>();
         int[] dx = {-1, 1, 0, 0};
         int[] dy = {0, 0, -1, 1};
-
+        
         int id = 1;
         for (int n = 0; n < N; n++) {
             for (int m = 0; m < M; m++) {
@@ -67,9 +70,7 @@ public class Main {
                 if (territory[n][m] != 0) continue;
                 int size = 1;
                 territory[n][m] = id;
-                Queue<int[]> queue = new ArrayDeque<>();
                 queue.add(new int[]{n, m});
-
                 while (!queue.isEmpty()) {
                     int[] cur = queue.poll();
 
@@ -87,6 +88,7 @@ public class Main {
                 }
                 hm.put(id, size % 10);
                 id++;
+                queue.clear();
             }
         }
     }
