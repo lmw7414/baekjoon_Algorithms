@@ -98,12 +98,14 @@ public class Main {
     }
 
     public static void printAnswer() {
+        StringBuilder sb = new StringBuilder();
         for (int n = 0; n < N; n++) {
             for (int m = 0; m < M; m++) {
-                System.out.print(answer[n][m]);
+                sb.append(answer[n][m]);
             }
-            System.out.println();
+            sb.append("\n");
         }
+        System.out.print(sb);
     }
 
 }
