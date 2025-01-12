@@ -200,13 +200,4 @@ public class Main {
         return result;
     }
 
-    public static void printArr() {
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < 2 * N; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
 }
