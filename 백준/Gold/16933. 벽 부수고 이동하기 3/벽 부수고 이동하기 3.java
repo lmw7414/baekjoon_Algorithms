@@ -27,9 +27,7 @@ public class Main {
                 arr[n][m] = str.charAt(m);
             }
         }
-
         calc();
-
     }
 
     public static void calc() {
@@ -51,7 +49,6 @@ public class Main {
                 int nx = cur.x + dx[d];
                 int ny = cur.y + dy[d];
                 if (OOB(nx, ny)) continue;
-
 
                 if (cur.day) { // 낮인 경우 | 벽 부수기 가능
                     if (d == 4) continue; // 낮이면 머무를 필요 없음
@@ -75,9 +72,7 @@ public class Main {
                     visit[cur.k][nx][ny] = true;
                     queue.add(new Point(nx, ny, cur.k, nextDay, cur.cost + 1));
                 }
-
             }
-
         }
         System.out.println(-1);
     }
@@ -85,7 +80,6 @@ public class Main {
     public static boolean OOB(int x, int y) {
         return x < 0 || y < 0 || x >= N || y >= M;
     }
-
 
     static class Point {
         int x, y, k;
