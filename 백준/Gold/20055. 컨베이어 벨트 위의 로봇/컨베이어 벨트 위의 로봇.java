@@ -5,8 +5,7 @@ import java.util.*;
 
 public class Main {
     static int N, K;
-    static List<Box> arr = new LinkedList<>();
-    static List<Integer> robots = new LinkedList<>();
+    static List<Box> arr = new ArrayList<>();
     static int zeroCnt = 0;
 
     public static void main(String[] args) throws IOException {
@@ -22,13 +21,9 @@ public class Main {
         // 3. 로봇 추가()
         int step = 1;
         while (zeroCnt < K) {
-//            System.out.println(step);
             rotate();
-//            print();
             moveRobot();
-//            print();
             addRobot();
-//            print();
             step++;
         }
         System.out.println(step - 1);
@@ -38,37 +33,22 @@ public class Main {
     public static void rotate() {
         Box last = arr.remove(arr.size() - 1);
         arr.add(0, last);
-
-        int removeIdx = -1;
-        for (int i = 0; i < robots.size(); i++) {
-            robots.set(i, (robots.get(i) + 1) % (2 * N));
-            if (robots.get(i) == N - 1) removeIdx = i;
-        }
-        if (removeIdx != -1) {
-            arr.get(N - 1).isHere = false;
-            robots.remove(removeIdx);
-        }
+        arr.get(N - 1).isHere = false;
     }
 
     // 로봇 이동
     public static void moveRobot() {
-        int removeIdx = -1;
-        for (int i = 0; i < robots.size(); i++) {
-            int curIdx = robots.get(i);
-            int nextIdx = (curIdx + 1) % (2 * N);
-            if (arr.get(nextIdx).isHere || arr.get(nextIdx).cnt < 1) continue;
+        for (int i = N - 2; i >= 0; i--) {
+            if (!arr.get(i).isHere) continue; // 로봇이 존재하지 않는다면
+            if(arr.get(i + 1).isHere) continue;
+            if (arr.get(i + 1).cnt < 1) continue; // 이동할 위치의 내구도가 0이라면
 
-            arr.get(curIdx).isHere = false;
-            arr.get(nextIdx).isHere = true;
-            arr.get(nextIdx).cnt--;
-            if (arr.get(nextIdx).cnt == 0) zeroCnt++;
-            robots.set(i, (robots.get(i) + 1) % (2 * N));
-            if (nextIdx == N - 1) removeIdx = i;
+            arr.get(i + 1).cnt--; // 이동할 곳의 내구도 감소
+            if (arr.get(i + 1).cnt == 0) zeroCnt++;
+            arr.get(i).isHere = false;  // 현재 위치
+            arr.get(i + 1).isHere = true; // 다음 이동할 위치
         }
-        if (removeIdx != -1) {
-            arr.get(N - 1).isHere = false;
-            robots.remove(removeIdx);
-        }
+        arr.get(N - 1).isHere = false;
     }
 
     // 로봇 올리기(boolean)
@@ -77,15 +57,16 @@ public class Main {
         arr.get(0).cnt--;
         if (arr.get(0).cnt == 0) zeroCnt++;
         arr.get(0).isHere = true;
-        robots.add(0);
     }
 
     public static void print() {
         System.out.println("---- ----");
-        for (int num : robots) System.out.print(num + " ");
+        for (int j = 0; j < 2 * N; j++) {
+            System.out.print(arr.get(j).cnt + "\t");
+        }
         System.out.println();
         for (int j = 0; j < 2 * N; j++) {
-            System.out.print(arr.get(j).cnt + " ");
+            System.out.print(arr.get(j).isHere?1 + "\t":0 + "\t");
         }
 
         System.out.println("\n---- ----");
