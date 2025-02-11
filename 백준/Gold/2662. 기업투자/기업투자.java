@@ -53,20 +53,22 @@ public class Main {
     }
 
     public static void getPath() {
-        List<Integer> answer = new ArrayList<>();
-        int curr = M;
+        StringBuilder sb = new StringBuilder();
+
+        Stack<Integer> stack = new Stack<>();
+        int building = M;
         int cost = N;
 
-        while (curr > 0) {
-            int invest = path[curr][cost];
-            answer.add(invest);
+        while (building > 0) {
+            int money = path[building][cost];
+            stack.add(money);
 
-            cost -= invest;
-            curr--;
+            cost -= money;
+            building--;
         }
 
-        Collections.reverse(answer);
-        for(int i : answer) System.out.print(i + " ");
+        while(!stack.isEmpty()) sb.append(stack.pop()).append(" ");
+        System.out.print(sb);
     }
 
 }
