@@ -1,4 +1,6 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -22,10 +24,10 @@ import java.util.*;
 public class Main {
     static int N, M, K;
     static int[] candies;
-    static List<Integer>[] adjList;
     static List<Group> groups = new ArrayList<>();
     static boolean[] visit;
-    static int[][] dp;
+    static int[] parent;
+    static int[] dp;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -35,11 +37,11 @@ public class Main {
         K = Integer.parseInt(st.nextToken());
 
         candies = new int[N + 1];
+        parent = new int[N + 1];
         visit = new boolean[N + 1];
-        adjList = new List[N + 1];
         st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            adjList[i] = new ArrayList<>();
+            parent[i] = i;
             candies[i] = Integer.parseInt(st.nextToken());
         }
 
@@ -47,46 +49,49 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
-            adjList[a].add(b);
-            adjList[b].add(a);
+            union(a, b);
         }
-
         searchGroup();
-        dp = new int[groups.size() + 1][K];
+        dp = new int[K];
 
-        for (int group = 1; group <= groups.size(); group++) {
-            for (int total = 0; total < K; total++) {
-                int gPopulation = groups.get(group - 1).size;
-                if(total - gPopulation < 0) dp[group][total] = dp[group - 1][total];
-                else dp[group][total] = Math.max(dp[group -1][total], dp[group - 1][total - gPopulation] + groups.get(group - 1).candy);
+        for (Group group : groups) {
+            for (int total = K - 1; total >= group.size; total--) {
+                dp[total] = Math.max(dp[total], dp[total - group.size] + group.candy);
             }
         }
-        System.out.println(dp[groups.size()][K - 1]);
+        System.out.println(dp[K - 1]);
     }
 
 
     public static void searchGroup() {
+        Map<Integer, Group> hm = new HashMap<>();
         for (int i = 1; i <= N; i++) {
-            if (visit[i]) continue;
-            visit[i] = true;
-            Group group = new Group();
-            make(i, group);
-            groups.add(group);
+            int root = find(i);
+            if (!hm.containsKey(root)) {
+                hm.put(root, new Group());
+            }
+            Group group = hm.get(root);
+            group.size++;
+            group.candy += candies[i];
         }
+        groups.addAll(hm.values());
     }
 
-    public static void make(int cur, Group group) {
-        visit[cur] = true;
-        group.size++;
-        group.candy += candies[cur];
-        for (int next : adjList[cur]) {
-            if (!visit[next]) make(next, group);
-        }
+    public static void union(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+        if (rootA != rootB) parent[rootB] = rootA;
+    }
+
+    public static int find(int a) {
+        if (a == parent[a]) return a;
+        else return parent[a] = find(parent[a]);
     }
 
     static class Group {
         int size;
         int candy;
+
         public Group() {
             size = 0;
             candy = 0;
