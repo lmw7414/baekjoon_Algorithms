@@ -31,7 +31,7 @@ public class Main {
                     pq.add(cur);
                     answer[idx++] = next.id;
                     if (--next.size > 0) {
-                        pq.add(cur);
+                        pq.add(next);
                     }
                     continue;
                 }
@@ -59,4 +59,6 @@ public class Main {
         }
 
     }
+
+
 }
