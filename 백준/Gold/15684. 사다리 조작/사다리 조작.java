@@ -1,71 +1,86 @@
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
+
+/**
+ * [입력]
+ * N: | 개수 최대 10개
+ * M: - 개수 놓을 수 있는 최대 가로선 270개
+ * H: 최대 30개
+ * [주의]
+ * 최대 놓을 수 있는 가로선의 개수는 3
+ */
 
 public class Main {
 
     static int N, M, H;
     static boolean[][] ladder;
-    static int answer;
+    static int answer = -1;
     static boolean correct = false;
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());  // 세로선의 개수
-        M = Integer.parseInt(st.nextToken());  // 가로 선의 개수
-        H = Integer.parseInt(st.nextToken());  // 가로 선을 놓을 수 있는 사이즈
-
-        // 사다리 배열 생성 - 가로 선이 있을 경우 해당 위치는 true
-        ladder = new boolean[H + 1][N + 1];
-
-        for (int i = 0; i < M; i++) {
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        H = Integer.parseInt(st.nextToken());
+        ladder = new boolean[H + 1][N + 2];
+        for(int m = 0; m < M; m++) {
             st = new StringTokenizer(br.readLine());
             int x = Integer.parseInt(st.nextToken());
             int y = Integer.parseInt(st.nextToken());
             ladder[x][y] = true;
         }
-
-        for (int i = 0; i <= 3; i++) { // 최대 3개까지 놓을 수 있다!
-            answer = i;
-            dfs(0);
-            if (correct) break;
+        for(int i = 0; i <= 3; i++) {
+            if(answer != -1) break;
+            DFS(i, 0, 1, 1);
         }
-        if (correct) System.out.println(answer);
-        else System.out.println(-1);
+        System.out.println(answer);
+
     }
 
-    public static void dfs(int depth) {
-        if(correct) return;
-        if (depth == answer) {
-            if (check()) correct = true;
+    public static void DFS(int depth, int cur, int x, int y) {
+        if(correct) return; // 이미 정답이 나온 경우 더 탐색할 필요없음
+        if(depth == cur) {
+            if(isAnswer()) {
+                answer = cur;
+                correct = true;
+            }
             return;
         }
+        if(y >= N) {
+            x++;
+            y = 1;
+        }
+        if(x > H) return;
 
-        for (int i = 1; i <= H; i++) {
-            for (int j = 1; j < N; j++) {
-                if (ladder[i][j]) continue;  // 이미 다리가 놓여져 있으면 넘어가기
-                if (ladder[i][j - 1] || ladder[i][j + 1]) continue;  // 양옆 체크
-                ladder[i][j] = true;
-                dfs(depth + 1);
-                ladder[i][j] = false;
-            }
+        if(!isOk(x, y)) DFS(depth, cur, x, y+1);
+        else {
+            ladder[x][y] = true;
+            DFS(depth, cur + 1, x, y + 1);
+            ladder[x][y] = false;
+            DFS(depth, cur, x, y + 1);
         }
     }
 
 
-    // 사다리 i에서 i로 가는지 확인하는 메서드
-    public static boolean check() {
-        for (int i = 1; i <= N; i++) {
+    // 해당 위치에 사다리를 놓을 수 있는지
+    // num : 기준되는 세로선 | h: 놓으려는 높이
+    // 놓을 수 있는 조건 -> 양쪽에 사다리가 있으면 안됨
+    public static boolean isOk(int h, int num) {
+        if(ladder[h][num]) return false;
+        return !ladder[h][num - 1] && !ladder[h][num + 1];
+    }
+
+    // 정답 확인 메서드(i -> i로 가는지)
+    public static boolean isAnswer() {
+        for(int i = 1; i <= N; i++) {
             int cur = i;
-            for (int j = 1; j <= H; j++) {
-                if (ladder[j][cur - 1])   // 현재 방향의 왼쪽에 다리가 있으면 왼쪽으로 이동
-                    cur--;
-                else if (ladder[j][cur])  // 현재 방향의 오른쪽에 다리가 있으면 오른쪽으로 이동
-                    cur++;
+            for(int j = 1; j <= H; j++) {
+                if(ladder[j][cur]) cur += 1; // 오른쪽으로 이동
+                else if(ladder[j][cur - 1]) cur -= 1; // 왼쪽으로 이동
             }
-            if (cur != i) return false;
+            if(i != cur) return false;
         }
         return true;
     }
