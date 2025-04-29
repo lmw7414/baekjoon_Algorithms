@@ -2,8 +2,8 @@ import java.util.*;
 
 /*
 [설명]
-- 상담유형은 최대 5개
-- 멘토는 최소 1명 ~ 20명. 유형별 최소 한명은 멘토로 있어야 함
+- 상담유형은 최대 5개 k개
+- 멘토는 최소 1명 ~ 20명. 유형별 최소 한명은 멘토로 있어야 함 n명
 - 상담 신청자는 최소 3명 ~ 300명
   - 도착시간은 최대 1000분
   - 상담 최대 시간은 100분
@@ -30,14 +30,15 @@ class Solution {
         // 멘토를 투입하지 않았을 때 대기 시간
         waiting = calc(k, 0, reqs);
         
-        int[] diff;
+        
+        int[] diff; //차이가 가장 큰 유형을 찾기 위함
         for(int curMento = k; curMento < n; curMento++) {
             diff = new int[k + 1];
             for(int i = 1; i<= k; i++) {
                 int[] temp = calc(k, i, reqs);
                 diff[i] = waiting[i] - temp[i];
             }
-            mento[findMax(k, diff)]++;
+            mento[findMax(k, diff)]++; // 차이가 가장 큰 곳에 멘토 우선 투입
             waiting = calc(k, 0, reqs); // 최신화
         }
         
@@ -58,20 +59,6 @@ class Solution {
             }
         }
         return idx;
-    }
-    
-    public void initPQ(int k, int[] mento) {
-        for(int i = 1; i<= k; i++) {
-            pq[i].clear();
-            for(int j = 1; j <= mento[i]; j++)
-                pq[i].add(0);
-        }
-    }
-    
-    public void printArr(int k, int[] arr) {
-        for(int i = 1; i <= k; i++)
-            System.out.print(arr[i] + " ");
-        System.out.println();
     }
     
     /**
@@ -100,6 +87,20 @@ class Solution {
             }   
         }
         return tempWaiting;
+    }
+    
+    public void initPQ(int k, int[] mento) {
+        for(int i = 1; i<= k; i++) {
+            pq[i].clear();
+            for(int j = 1; j <= mento[i]; j++)
+                pq[i].add(0);
+        }
+    }
+    
+    public void printArr(int k, int[] arr) {
+        for(int i = 1; i <= k; i++)
+            System.out.print(arr[i] + " ");
+        System.out.println();
     }
     
 }
