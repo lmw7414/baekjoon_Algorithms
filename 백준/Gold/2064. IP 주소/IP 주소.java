@@ -10,7 +10,15 @@ public class Main {
         int N = Integer.parseInt(br.readLine());
         String[] str = new String[N];
         for (int i = 0; i < N; i++) str[i] = br.readLine();
-
+        sort(str);
+        int M = getSubnetMask(str[0], str[N - 1]);
+        int[] ipAddress = makeIpAddress(str[0], M);
+        printIp(ipAddress);
+        int[] subnetMask = makeSubnetMask(M);
+        printIp(subnetMask);
+    }
+    
+    public static void sort(String[] str) {
         Arrays.sort(str, (a, b) -> {
             String[] sa = a.split("\\.");
             String[] sb = b.split("\\.");
@@ -21,12 +29,6 @@ public class Main {
             }
             return 0;
         });
-
-        int M = getSubnetMask(str[0], str[N - 1]);
-        int[] ipAddress = makeIpAddress(str[0], M);
-        printIp(ipAddress);
-        int[] subnetMask = makeSubnetMask(M);
-        printIp(subnetMask);
     }
 
     // 서브넷 마스크 구하기(앞자리 부터 동일한 구간 찾기)
@@ -92,15 +94,3 @@ public class Main {
     }
 
 }
-
-/*
-172.20.32.1
-172.20.32.7
-172.20.32.8
-172.20.32.15
-172.20.32.16
-172.20.32.30
-172.20.32.31
-172.20.32.32
-172.20.32.34
- */
