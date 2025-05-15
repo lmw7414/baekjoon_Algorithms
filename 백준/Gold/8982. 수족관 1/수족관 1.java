@@ -51,7 +51,7 @@ public class Main {
             // 왼쪽
             for(int i = idx - 1; i >= 0; i--) {
                 Line next = width.get(i);
-                int max = Math.min(maxHeight[idx], next.start.y);
+                int max = Math.min(maxHeight[i + 1], next.start.y);
                 if(maxHeight[i] == next.start.y) break; // 물이 없는 곳이 있으면 break;
                 total -= (next.end.x - next.start.x) * (max - maxHeight[i]);
                 maxHeight[i] = Math.min(max, next.start.y);
@@ -59,11 +59,12 @@ public class Main {
             // 오른쪽
             for(int i = idx + 1; i < width.size(); i++) {
                 Line next = width.get(i);
-                int max = Math.min(maxHeight[idx], next.start.y);
+                int max = Math.min(maxHeight[i - 1], next.start.y);
                 if(maxHeight[i] == next.start.y) break; // 물이 없는 곳이 있으면 break;
                 total -= (next.end.x - next.start.x) * (max - maxHeight[i]);
                 maxHeight[i] = Math.min(max, next.start.y);
             }
+
         }
         System.out.println(total);
     }
