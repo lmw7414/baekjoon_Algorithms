@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,8 +23,8 @@ public class Main {
     }
 
     public static String bfs(int val, int target) {
-        Set<Integer> visited = new HashSet<>();
-        visited.add(val);
+        boolean[] visited = new boolean[10000];
+        visited[val] = true;
         Queue<Node> queue = new ArrayDeque<>();
         queue.add(new Node("", val));
 
@@ -36,29 +35,28 @@ public class Main {
                 if (i == 0) {
                     next = methodD(cur.val);
                     if (next == target) return cur.str + "D";
-                    if (visited.contains(next)) continue;
-                    visited.add(next);
+                    if (visited[next]) continue;
+                    visited[next] = true;
                     queue.add(new Node(cur.str + "D", next));
                 } else if (i == 1) {
                     next = methodS(cur.val);
                     if (next == target) return cur.str + "S";
-                    if (visited.contains(next)) continue;
-                    visited.add(next);
+                    if (visited[next]) continue;
+                    visited[next] = true;
                     queue.add(new Node(cur.str + "S", next));
                 } else if (i == 2) {
                     next = methodL(cur.val);
                     if (next == target) return cur.str + "L";
-                    if (visited.contains(next)) continue;
-                    visited.add(next);
+                    if (visited[next]) continue;
+                    visited[next] = true;
                     queue.add(new Node(cur.str + "L", next));
                 } else {
                     next = methodR(cur.val);
                     if (next == target) return cur.str + "R";
-                    if (visited.contains(next)) continue;
-                    visited.add(next);
+                    if (visited[next]) continue;
+                    visited[next] = true;
                     queue.add(new Node(cur.str + "R", next));
                 }
-
             }
         }
         return "";
