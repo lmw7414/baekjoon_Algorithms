@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,13 +22,20 @@ public class Main {
             st = new StringTokenizer(br.readLine());
             pq.add(new Line(i, Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
         }
-
+        int left = pq.peek().x1;
+        int right = pq.peek().x2;
         while(!pq.isEmpty()) {
             Line cur = pq.poll();
+            
             if(pq.isEmpty()) break;
             Line next = pq.peek();
-            if(cur.x1 <= next.x1 && next.x1 <= cur.x2) {
+            if(left <= next.x1 && next.x1 <= right) {
+                left = Math.min(left, next.x1);
+                right = Math.max(right, next.x2);
                 union(cur.id, next.id);
+            } else {
+                left = next.x1;
+                right = next.x2;
             }
         }
         StringBuilder sb= new StringBuilder();
