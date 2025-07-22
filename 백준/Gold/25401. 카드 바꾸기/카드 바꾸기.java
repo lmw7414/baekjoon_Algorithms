@@ -25,8 +25,8 @@ public class Main {
                 int term = -1;
                 if (x == 0) { // 연이은 숫자
                     term = arr[j] - arr[i];
-                } else if ((arr[j] - arr[i]) % x == 0) {
-                    term = arr[j] - arr[i] / (x + 1);
+                } else if ((arr[j] - arr[i]) % (x + 1) == 0) {
+                    term = (arr[j] - arr[i]) / (x + 1);
                 } else continue;
                 int val = check(i, term);
                 answer = Math.min(val, answer);
