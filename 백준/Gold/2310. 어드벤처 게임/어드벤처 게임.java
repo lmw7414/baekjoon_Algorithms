@@ -4,15 +4,20 @@ import java.io.*;
 
 public class Main {
 
+    static int N;
+    static boolean[] visit;
+    static int[] costs;
+    static List<Integer>[] adjList;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
 
         while (true) {
-            int N = Integer.parseInt(br.readLine());
+            N = Integer.parseInt(br.readLine());
             if (N == 0) break;
-            List<Integer>[] adjList = new List[N + 1];
-            int[] costs = new int[N + 1];
+            adjList = new List[N + 1];
+            costs = new int[N + 1];
             for (int i = 1; i <= N; i++) {
                 adjList[i] = new ArrayList<>();
             }
@@ -30,15 +35,15 @@ public class Main {
                     adjList[i].add(to);
                 }
             }
-            boolean[] visit = new boolean[N + 1];
+            visit = new boolean[N + 1];
             visit[1] = true;
-            if (DFS(N, visit, costs, adjList, 1, 0)) sb.append("Yes\n");
+            if (DFS(1, 0)) sb.append("Yes\n");
             else sb.append("No\n");
         }
         System.out.print(sb);
     }
 
-    public static boolean DFS(int N, boolean[] visit, int[] costs, List<Integer>[] adjList, int cur, int cost) {
+    public static boolean DFS(int cur, int cost) {
         if (N == cur) return true;
         for (int next : adjList[cur]) {
             if (visit[next]) continue;
@@ -48,7 +53,7 @@ public class Main {
             else nextCost = cost + costs[next];
             if (nextCost < 0) continue;
             visit[next] = true;
-            if (DFS(N, visit, costs, adjList, next, nextCost)) return true;
+            if (DFS(next, nextCost)) return true;
             visit[next] = false;
         }
         return false;
